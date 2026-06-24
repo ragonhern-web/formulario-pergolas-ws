@@ -20,6 +20,13 @@
         <div class="ghost-pill">Arrastra · zoom · doble clic para reset</div>
       </div>
 
+      <!-- View preset buttons — desktop only, hidden on mobile via responsive.css -->
+      <div class="view-controls" aria-label="Vistas predefinidas">
+        <button class="view-btn active" data-view="iso">Isométrica</button>
+        <button class="view-btn" data-view="front">Frontal</button>
+        <button class="view-btn" data-view="side">Lateral</button>
+      </div>
+
       <div class="canvas-wrap">
         <canvas id="pergolaCanvas"></canvas>
       </div>
@@ -83,12 +90,6 @@
               <button class="chip" data-preset="6,8,3">6×8 m</button>
             </div>
 
-            <div class="section-label">Vista 3D</div>
-            <div class="presets" aria-label="Vistas predefinidas">
-              <button class="chip view-btn" data-view="front">Frontal</button>
-              <button class="chip view-btn" data-view="side">Lateral</button>
-              <button class="chip view-btn active" data-view="iso">Isométrica</button>
-            </div>
           </div>
 
           <!-- Step 2: Iron finish — cards injected by renderIronCards() -->

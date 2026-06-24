@@ -36,6 +36,7 @@
 
   .topbar { left: 16px; right: 16px; top: 14px; }
   .ghost-pill { display: none; }
+  .view-controls { display: none; }   /* view buttons are desktop-only */
   .canvas-wrap { top: 0; left: 0; right: 0; bottom: 0; }
   .dimension-card { display: none; }
 

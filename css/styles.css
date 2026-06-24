@@ -72,6 +72,43 @@ body::before {
   backdrop-filter: blur(14px);
 }
 
+/* View preset buttons — positioned just below the topbar, centered horizontally */
+.view-controls {
+  position: absolute;
+  z-index: 6;
+  top: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+.view-btn {
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(6,10,10,.78);
+  color: rgba(255,255,255,.76);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  letter-spacing: -.02em;
+  font-family: inherit;
+  transition: background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+.view-btn:hover {
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.44);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.view-btn.active {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
 .canvas-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1; }
 canvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
 canvas.dragging { cursor: grabbing; }
@@ -134,10 +171,6 @@ input[type="range"]::-moz-range-thumb   { width: 28px; height: 28px; border-radi
   box-shadow: 0 0 0 4px rgba(255,255,255,.07);
 }
 
-.section-label {
-  font-size: 11px; text-transform: uppercase; letter-spacing: .12em;
-  font-weight: 850; color: var(--muted); margin-top: 18px; margin-bottom: 8px;
-}
 .presets { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 12px; }
 .chip {
   border: 1px solid var(--line); background: rgba(255,255,255,.04); color: #fff;
