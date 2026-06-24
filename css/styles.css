@@ -32,6 +32,8 @@ body::before {
   position: relative; height: 100vh; width: 100vw;
   display: grid; grid-template-columns: minmax(520px,1.12fr) minmax(440px,.88fr);
 }
+/* Hidden on desktop — only used on mobile to hold the space of the fixed visual */
+.visual-spacer { display: none; }
 
 /* ── LEFT: 3D VISUAL ───────────────────────────────────────────────── */
 .visual {
