@@ -1,0 +1,23 @@
+@media (max-width: 980px) {
+  html, body { overflow: auto; }
+
+  .app { height: auto; min-height: 100vh; grid-template-columns: 1fr; }
+
+  .visual { height: 48vh; min-height: 360px; position: sticky; top: 0; z-index: 10; }
+  .visual::after { background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.86) 100%); }
+
+  .topbar { left: 20px; right: 20px; top: 18px; }
+  .ghost-pill { display: none; }
+
+  .dimension-card { left: 12px; right: 12px; bottom: 10px; justify-content: center; max-width: none; }
+  .metric { min-width: 104px; padding: 10px 12px; border-radius: 14px; }
+  .metric strong { font-size: 19px; }
+
+  .panel { height: auto; min-height: 46vh; border-left: 0; border-top: 1px solid var(--line); padding: 20px; overflow: visible; }
+  .panel-title h2 { font-size: 30px; }
+
+  .cards { grid-template-columns: 1fr; }
+  .two   { grid-template-columns: 1fr; }
+
+  .toast { left: 18px; right: 18px; bottom: 18px; }
+}
