@@ -21,13 +21,17 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
   };
 }
 
+let _canvasW = 0, _canvasH = 0;
+
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
   canvas.width  = Math.round(rect.width  * DPR);
   canvas.height = Math.round(rect.height * DPR);
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  _canvasW = rect.width;
+  _canvasH = rect.height;
 }
-window.addEventListener('resize', resizeCanvas);
+// Initial size
 resizeCanvas();
 
 // ── PROJECTION ────────────────────────────────────────────────────────────────
@@ -166,6 +170,9 @@ function drawPostLine(project, start3, end3, color, mode = 'front') {
 function drawPergola() {
   const rect = canvas.getBoundingClientRect();
   const w = rect.width, h = rect.height;
+  // Resize the backing bitmap whenever the canvas element changes size
+  // (covers window resize AND CSS transitions like the mobile PiP animation)
+  if (w !== _canvasW || h !== _canvasH) resizeCanvas();
   ctx.clearRect(0, 0, w, h);
 
   // Animate display values towards state targets

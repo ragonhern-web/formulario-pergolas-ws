@@ -1,77 +1,77 @@
 @media (max-width: 980px) {
   html, body { overflow: auto; }
-
   .app { height: auto; min-height: 100vh; grid-template-columns: 1fr; }
 
-  /* ── 3D VISUAL: opaque, sticky, always visible at top ────────────── */
+  /* ── 3D VISUAL: fixed so it can transition smoothly to the mini corner ── */
   .visual {
-    height: 56vh;
-    min-height: 400px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: #030505; /* solid — no transparency bleed from body gradient */
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 54vh;
+    min-height: 380px;
+    z-index: 20;
+    background: #030505;
+    /* Smooth PiP transition */
+    transition:
+      top    .34s cubic-bezier(.4,0,.2,1),
+      right  .34s cubic-bezier(.4,0,.2,1),
+      left   .34s cubic-bezier(.4,0,.2,1),
+      width  .34s cubic-bezier(.4,0,.2,1),
+      height .34s cubic-bezier(.4,0,.2,1),
+      min-height    .34s cubic-bezier(.4,0,.2,1),
+      border-radius .34s cubic-bezier(.4,0,.2,1),
+      box-shadow    .34s cubic-bezier(.4,0,.2,1);
   }
-
-  /* Remove the dark vignette overlay — it made the canvas look muddy on mobile */
+  /* No dark vignette overlay on mobile */
   .visual::after { display: none; }
+
+  /* Spacer: ghost block that holds the visual's layout space while it's fixed */
+  .visual-spacer {
+    display: block;
+    height: 54vh;
+    min-height: 380px;
+  }
 
   .topbar { left: 16px; right: 16px; top: 14px; }
   .ghost-pill { display: none; }
 
-  /* Canvas fills the visual except the 66px reserved for the metrics bar below */
-  .canvas-wrap { top: 0; left: 0; right: 0; bottom: 66px; }
+  /* Canvas fills the full visual area (no dimension bar below) */
+  .canvas-wrap { top: 0; left: 0; right: 0; bottom: 0; }
 
-  /* ── METRICS BAR: horizontal strip at the bottom of the visual ───── */
-  /* Sits below the canvas, fully opaque so it never overlaps the 3D view */
-  .dimension-card {
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 66px;
-    background: #030505;
-    border-top: 1px solid rgba(255, 255, 255, .10);
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 0;
-    padding: 0;
-    max-width: none;
-    align-items: stretch;
-    justify-content: stretch;
-    backdrop-filter: none;
+  /* Metric cards hidden on mobile — dimensions are visible on the 3D canvas itself */
+  .dimension-card { display: none; }
+
+  /* ── MINI PICTURE-IN-PICTURE (added via JS on scroll) ─────────────────── */
+  .visual.mini {
+    /* Shrink and float to top-right corner */
+    top: 14px;
+    left: auto;
+    right: 14px;
+    width: 46vw;
+    max-width: 200px;
+    height: 34vw;
+    max-height: 155px;
+    min-height: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow:
+      0 12px 40px rgba(0,0,0,.7),
+      0 0 0 1px rgba(255,255,255,.16);
   }
+  /* Hide nav chrome in mini mode — canvas only */
+  .visual.mini .topbar        { display: none; }
+  .visual.mini .dimension-card { display: none; }
 
-  .metric {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: 0;
-    border-right: 1px solid rgba(255, 255, 255, .08);
-    border-radius: 0;
-    min-width: 0;
-    padding: 6px 8px;
-    box-shadow: none;
-    backdrop-filter: none;
-  }
-  .metric:last-child { border-right: 0; }
-  .metric span   { font-size: 9px;  margin-bottom: 3px; }
-  .metric strong { font-size: 15px; letter-spacing: -.05em; }
-  .metric em     { font-size: 10px; margin-left: 2px; }
-
-  /* ── FORM PANEL: below the visual, scrollable ───────────────────── */
+  /* ── FORM PANEL ─────────────────────────────────────────────────────────── */
   .panel {
     height: auto;
     border-left: 0;
     border-top: 1px solid var(--line);
     padding: 20px;
     overflow: visible;
+    /* No min-height needed; spacer handles the initial offset */
   }
   .panel-title h2 { font-size: 28px; }
-
   .cards { grid-template-columns: 1fr; }
   .two   { grid-template-columns: 1fr; }
-
   .toast { left: 18px; right: 18px; bottom: 18px; }
 }
