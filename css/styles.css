@@ -132,6 +132,10 @@ input[type="range"]::-moz-range-thumb   { width: 28px; height: 28px; border-radi
   box-shadow: 0 0 0 4px rgba(255,255,255,.07);
 }
 
+.section-label {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .12em;
+  font-weight: 850; color: var(--muted); margin-top: 18px; margin-bottom: 8px;
+}
 .presets { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 12px; }
 .chip {
   border: 1px solid var(--line); background: rgba(255,255,255,.04); color: #fff;
