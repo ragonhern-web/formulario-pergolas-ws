@@ -71,7 +71,6 @@ function setStep(step) {
   if (state.step === 3) renderRoofCards();
   updateSummary();
   applyStepCamera(state.step);
-  if (typeof updateMobilePipState === 'function') updateMobilePipState();
 }
 
 function applyStepCamera(step) {

@@ -2,109 +2,64 @@
   html, body { overflow: auto; }
   .app { height: auto; min-height: 100vh; grid-template-columns: 1fr; }
 
-  /* ── 3D VISUAL: always fixed on mobile — spacer holds layout space ────────
-     No CSS transitions. PiP state changes are instant (class swap).        */
+  /* ── 3D VISUAL: fixed + PiP ──────────────────────────────────────────────
+     IMPORTANT: no "left" property in either state — CSS cannot animate to/from
+     "auto", which would break the transition. Position is controlled only with
+     "right" (anchor) + "width" (size). Both are fully animatable.           */
   .visual {
     position: fixed;
     top: 0;
     right: 0;
-    width: 100%;
-    height: 46vh;
-    min-height: 340px;
+    width: 100vw;          /* full width without touching left */
+    height: 54vh;
+    min-height: 380px;
     z-index: 20;
     background: #030505;
-    overflow: hidden;
+    overflow: hidden;      /* clip children during the shrink transition */
+    transition:
+      top           .38s cubic-bezier(.4,0,.2,1),
+      right         .38s cubic-bezier(.4,0,.2,1),
+      width         .38s cubic-bezier(.4,0,.2,1),
+      height        .38s cubic-bezier(.4,0,.2,1),
+      min-height    .38s cubic-bezier(.4,0,.2,1),
+      border-radius .38s cubic-bezier(.4,0,.2,1),
+      box-shadow    .38s cubic-bezier(.4,0,.2,1);
   }
   .visual::after { display: none; }
 
-  /* Spacer keeps the layout space occupied while .visual is fixed */
+  /* Ghost block in the flow that reserves the visual's space */
   .visual-spacer {
     display: block;
-    height: 46vh;
-    min-height: 340px;
+    height: 54vh;
+    min-height: 380px;
   }
 
-  /* ── PiP HEADER — visible only inside pip-active ─────────────────────── */
-  .pip-header {
-    display: none;
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    z-index: 10;
-    background: rgba(5,7,7,.9);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 6px 10px;
-    align-items: center;
-    gap: 6px;
-    border-bottom: 1px solid rgba(255,255,255,.10);
-  }
-  .pip-label {
-    flex: 1;
-    font-size: 10px;
-    font-weight: 800;
-    color: rgba(255,255,255,.6);
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    font-family: inherit;
-  }
-  .pip-btn {
-    border: 1px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.07);
-    color: rgba(255,255,255,.65);
-    border-radius: 999px;
-    padding: 3px 9px;
-    font-size: 10px;
-    font-weight: 800;
-    cursor: pointer;
-    font-family: inherit;
-    line-height: 1.4;
-  }
-
-  /* ── PiP ACTIVE: mini floating corner (bottom-right) ────────────────── */
-  body.pip-active .visual {
-    top: auto;
-    right: 16px;
-    bottom: 88px;
-    width: 180px;
-    height: 140px;
-    min-height: 140px;
-    border-radius: 20px;
-    box-shadow: 0 18px 60px rgba(0,0,0,.6);
-    border: 1px solid rgba(255,255,255,.16);
-  }
-  body.pip-active .pip-header   { display: flex; }
-  body.pip-active .canvas-wrap  { top: 30px; }
-  body.pip-active .topbar,
-  body.pip-active .dimension-card,
-  body.pip-active .ghost-pill   { display: none; }
-
-  /* ── PiP EXPANDED: wider panel (bottom) ─────────────────────────────── */
-  body.pip-expanded .visual {
-    left: 16px;
-    right: 16px;
-    bottom: 88px;
-    top: auto;
-    width: auto;
-    height: 360px;
-    min-height: 360px;
-    border-radius: 20px;
-  }
-  body.pip-expanded .canvas-wrap { top: 30px; }
-
-  /* ── PiP MINIMIZED: visually hidden, canvas keeps its dimensions ─────── */
-  body.pip-minimized .visual {
-    visibility: hidden;
-    pointer-events: none;
-  }
-
-  /* ── SHARED MOBILE OVERRIDES ─────────────────────────────────────────── */
-  .topbar   { left: 16px; right: 16px; top: 14px; }
-  .ghost-pill    { display: none; }
-  .view-controls { display: none; }
-  .canvas-wrap   { top: 0; left: 0; right: 0; bottom: 0; }
+  .topbar { left: 16px; right: 16px; top: 14px; }
+  .ghost-pill { display: none; }
+  .view-controls { display: none; }   /* view buttons are desktop-only */
+  .canvas-wrap { top: 0; left: 0; right: 0; bottom: 0; }
   .dimension-card { display: none; }
 
-  /* ── FORM PANEL ──────────────────────────────────────────────────────── */
+  /* ── MINI (picture-in-picture corner) ───────────────────────────────────
+     Only "right" and "width" change horizontally → both animate cleanly.   */
+  .visual.mini {
+    top: 14px;
+    right: 14px;
+    width: 46vw;
+    max-width: 195px;
+    height: 32vw;
+    max-height: 148px;
+    min-height: 0;
+    border-radius: 18px;
+    box-shadow:
+      0 14px 44px rgba(0,0,0,.72),
+      0 0 0 1px rgba(255,255,255,.18);
+  }
+  .visual.mini .topbar { display: none; }
+
+  /* ── FORM PANEL ─────────────────────────────────────────────────────────
+     min-height ensures the page is always tall enough to scroll past the
+     PiP threshold (12% of viewport ≈ 60–100 px) on any device.            */
   .panel {
     height: auto;
     min-height: 60vh;
@@ -117,12 +72,4 @@
   .cards { grid-template-columns: 1fr; }
   .two   { grid-template-columns: 1fr; }
   .toast { left: 18px; right: 18px; bottom: 18px; }
-
-  /* Nav scrolls with the page — NOT sticky/fixed on mobile */
-  .nav {
-    position: relative;
-    bottom: auto;
-    background: none;
-    padding-top: 0;
-  }
 }
