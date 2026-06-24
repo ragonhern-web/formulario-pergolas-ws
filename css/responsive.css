@@ -13,6 +13,7 @@
     z-index: 20;
     background: #030505;
     overflow: hidden;
+    transition: height .4s ease, min-height .4s ease;
   }
   .visual::after { display: none; }
 
@@ -21,6 +22,17 @@
     display: block;
     height: 54vh;
     min-height: 340px;
+    transition: height .4s ease, min-height .4s ease;
+  }
+
+  /* Al hacer scroll, el visor se reduce ligeramente para mostrar más formulario */
+  body.visual-compact .visual {
+    height: 36vh;
+    min-height: 210px;
+  }
+  body.visual-compact .visual-spacer {
+    height: 36vh;
+    min-height: 210px;
   }
 
   .topbar { left: 16px; right: 16px; top: 14px; }

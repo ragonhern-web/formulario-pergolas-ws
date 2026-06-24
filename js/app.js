@@ -40,6 +40,20 @@ $('nextBtn').addEventListener('click', () => {
   });
 });
 
+// ── MÓVIL: reducir visor al hacer scroll ─────────────────────────────────────
+// Al bajar un poco, el visor pasa de 54vh a 36vh para dar más espacio al form.
+(function initCompactVisual() {
+  if (window.innerWidth > 980) return;
+  const threshold = 40;
+  function onScroll() {
+    document.body.classList.toggle('visual-compact', (window.pageYOffset || window.scrollY) > threshold);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 980) document.body.classList.remove('visual-compact');
+  });
+})();
+
 // Initialise
 syncMeasures();
 setStep(1);
