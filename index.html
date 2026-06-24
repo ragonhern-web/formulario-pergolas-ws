@@ -11,7 +11,7 @@
   <main class="app">
 
     <!-- LEFT: 3D interactive visualisation -->
-    <section class="visual" aria-label="Vista dinámica de la pérgola">
+    <section class="visual" id="visualPreview" aria-label="Vista dinámica de la pérgola">
       <div class="topbar">
         <div class="brand" aria-label="Welding Systems">
           <div class="mark"></div>
@@ -25,6 +25,13 @@
         <button class="view-btn active" data-view="iso">Isométrica</button>
         <button class="view-btn" data-view="front">Frontal</button>
         <button class="view-btn" data-view="side">Lateral</button>
+      </div>
+
+      <!-- PiP header — mobile only, visible only when body.pip-active -->
+      <div class="pip-header" aria-hidden="true">
+        <span class="pip-label">Vista 3D</span>
+        <button class="pip-btn" id="expandPipBtn">Expandir</button>
+        <button class="pip-btn" id="minimizePipBtn">Minimizar</button>
       </div>
 
       <div class="canvas-wrap">

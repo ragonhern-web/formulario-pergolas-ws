@@ -11,6 +11,24 @@ const PRESET_VIEWS = {
   iso:   { yaw: -0.72,         pitch: -0.62, zoom: 1 }
 };
 
+// ── CAMERA FOCUS HELPERS ─────────────────────────────────────────────────────
+
+function setCameraFocus(focus) {
+  state.targetFocusX = focus.x || 0;
+  state.targetFocusY = focus.y || 0;
+  state.targetFocusZ = focus.z || 0;
+}
+
+function resetCameraFocus() {
+  state.targetFocusX = 0;
+  state.targetFocusY = 0;
+  state.targetFocusZ = 0;
+}
+
+function updateViewButtons() {
+  document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
+}
+
 let isDragging    = false;
 let dragPointerId = null;
 let lastPos       = { x: 0, y: 0 };
@@ -21,13 +39,10 @@ const activePointers = new Map();
 function getDistance(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
 
 function resetView() {
-  state.targetYaw        = PRESET_VIEWS.iso.yaw;
-  state.targetPitch      = PRESET_VIEWS.iso.pitch;
-  state.targetZoom       = PRESET_VIEWS.iso.zoom;
-  state.targetFocusX     = 0;
-  state.targetFocusY     = 0;
-  state.targetFocusZ     = 0;
-  // Reflect active state on buttons
+  state.targetYaw   = PRESET_VIEWS.iso.yaw;
+  state.targetPitch = PRESET_VIEWS.iso.pitch;
+  state.targetZoom  = PRESET_VIEWS.iso.zoom;
+  resetCameraFocus();
   document.querySelectorAll('[data-view]').forEach(b =>
     b.classList.toggle('active', b.dataset.view === 'iso')
   );
@@ -101,13 +116,10 @@ document.querySelectorAll('[data-view]').forEach(btn => {
   btn.addEventListener('click', () => {
     const v = PRESET_VIEWS[btn.dataset.view];
     if (!v) return;
-    state.targetYaw    = v.yaw;
-    state.targetPitch  = v.pitch;
-    state.targetZoom   = v.zoom;
-    // Manual view always resets the focus to scene centre
-    state.targetFocusX = 0;
-    state.targetFocusY = 0;
-    state.targetFocusZ = 0;
+    state.targetYaw   = v.yaw;
+    state.targetPitch = v.pitch;
+    state.targetZoom  = v.zoom;
+    resetCameraFocus();
     document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   });

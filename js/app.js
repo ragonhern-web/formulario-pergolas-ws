@@ -41,26 +41,74 @@ $('nextBtn').addEventListener('click', () => {
 });
 
 // ── MOBILE PICTURE-IN-PICTURE VIEWER ─────────────────────────────────────────
-// When the user scrolls down on mobile the 3D viewer shrinks to a floating
-// corner window so the form is fully readable while changes remain visible live.
-//
-// Threshold = 12% of viewport height (min 60 px). This is well within the
-// actual scrollable range on any phone, so the mini mode is always reachable.
+// .visual is always position:fixed on mobile; .visual-spacer holds layout space.
+// When the spacer scrolls out of view (user reads the form), body.pip-active
+// shrinks the viewer to a floating corner. State is driven by IntersectionObserver,
+// NOT by scroll arithmetic — PiP never interferes with step logic (state.step).
 
-(function initMiniViewer() {
+function updateMobilePipState() {
+  if (window.innerWidth > 980) {
+    document.body.classList.remove('pip-active', 'pip-expanded', 'pip-minimized');
+    return;
+  }
+  requestAnimationFrame(resizeCanvas);
+}
+
+(function initMobilePip() {
   if (window.innerWidth > 980) return;
 
-  const visual    = document.querySelector('.visual');
-  const threshold = Math.max(60, window.innerHeight * 0.12);
+  const spacer      = document.querySelector('.visual-spacer');
+  const expandBtn   = document.getElementById('expandPipBtn');
+  const minimizeBtn = document.getElementById('minimizePipBtn');
 
-  function onScroll() {
-    // pageYOffset is the cross-browser fallback for scrollY
-    visual.classList.toggle('mini', (window.pageYOffset || window.scrollY) > threshold);
+  function activatePip(on) {
+    if (on) {
+      document.body.classList.add('pip-active');
+      document.body.classList.remove('pip-minimized');
+    } else {
+      document.body.classList.remove('pip-active', 'pip-expanded', 'pip-minimized');
+    }
+    requestAnimationFrame(resizeCanvas);
   }
 
-  window.addEventListener('scroll', onScroll, { passive: true });
+  // Primary: IntersectionObserver on spacer. When spacer exits viewport → PiP on.
+  if (spacer && 'IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      if (window.innerWidth > 980) { activatePip(false); return; }
+      activatePip(!entries[0].isIntersecting);
+    }, { threshold: 0.1 }).observe(spacer);
+  } else if (spacer) {
+    // Fallback: scroll listener
+    function checkScroll() {
+      if (window.innerWidth > 980) { activatePip(false); return; }
+      activatePip(spacer.getBoundingClientRect().bottom < 80);
+    }
+    window.addEventListener('scroll', checkScroll, { passive: true });
+    checkScroll();
+  }
+
+  // Expand/collapse the PiP to a wider panel
+  if (expandBtn) {
+    expandBtn.addEventListener('click', () => {
+      document.body.classList.toggle('pip-expanded');
+      requestAnimationFrame(resizeCanvas);
+    });
+  }
+
+  // Minimizar: visually hides the PiP (canvas keeps rendering)
+  if (minimizeBtn) {
+    minimizeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('pip-minimized');
+      requestAnimationFrame(resizeCanvas);
+    });
+  }
+
+  // On desktop resize: clean up all PiP classes
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 980) visual.classList.remove('mini');
+    if (window.innerWidth > 980) {
+      document.body.classList.remove('pip-active', 'pip-expanded', 'pip-minimized');
+      requestAnimationFrame(resizeCanvas);
+    }
   });
 })();
 

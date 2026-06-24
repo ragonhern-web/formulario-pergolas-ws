@@ -27,11 +27,10 @@ const ROOFS = [
 ];
 
 // Automatic camera position for each form step.
-// yaw/pitch/zoom: same units as state.js. fx/fy/fz: world-space look-at offset in metres
-// (0,0,0 keeps the scene origin centred; positive fy shifts focus upward toward the roof).
+// focus: world-space look-at offset in metres — omit to keep scene centre.
 const STEP_CAMERAS = {
-  1: { yaw: -0.72, pitch: -0.62, zoom: 1.00, fx: 0,   fy: 0,   fz: 0   },
-  2: { yaw: -0.85, pitch: -0.40, zoom: 1.26, fx: 0,   fy: 1.0, fz: 0.2 },
-  3: { yaw: -0.60, pitch: -0.95, zoom: 1.12, fx: 0,   fy: 2.0, fz: 0   },
-  4: { yaw: -0.72, pitch: -0.58, zoom: 0.90, fx: 0,   fy: 0,   fz: 0   }
+  1: { name: 'medidas',    yaw: -0.72, pitch: -0.62, zoom: 1.00 },
+  2: { name: 'estructura', yaw: -0.95, pitch: -0.46, zoom: 1.28, focus: { x: 1,   y: 1.5, z: 1 } },
+  3: { name: 'techo',      yaw: -0.72, pitch: -1.02, zoom: 1.16, focus: { x: 0,   y: 2.8, z: 0 } },
+  4: { name: 'resumen',    yaw: -0.72, pitch: -0.58, zoom: 0.96 }
 };

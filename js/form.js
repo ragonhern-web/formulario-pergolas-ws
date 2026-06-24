@@ -71,19 +71,22 @@ function setStep(step) {
   if (state.step === 3) renderRoofCards();
   updateSummary();
   applyStepCamera(state.step);
+  if (typeof updateMobilePipState === 'function') updateMobilePipState();
 }
 
 function applyStepCamera(step) {
   const cam = STEP_CAMERAS[step];
   if (!cam) return;
-  state.targetYaw        = cam.yaw;
-  state.targetPitch      = cam.pitch;
-  state.targetZoom       = cam.zoom;
-  state.targetFocusX     = cam.fx;
-  state.targetFocusY     = cam.fy;
-  state.targetFocusZ     = cam.fz;
-  // Clear the active state on manual view buttons — auto camera is now in control
-  document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
+  state.viewMode    = cam.name;
+  state.targetYaw   = cam.yaw;
+  state.targetPitch = cam.pitch;
+  state.targetZoom  = cam.zoom;
+  if (cam.focus) {
+    setCameraFocus(cam.focus);
+  } else {
+    resetCameraFocus();
+  }
+  updateViewButtons();
 }
 
 function updateSummary() {

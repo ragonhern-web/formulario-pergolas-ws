@@ -83,6 +83,9 @@ body::before {
   gap: 8px;
   white-space: nowrap;
 }
+/* PiP header — hidden on desktop, shown via responsive.css in pip-active mode */
+.pip-header { display: none; }
+
 .view-btn {
   border: 1px solid rgba(255,255,255,.22);
   background: rgba(6,10,10,.78);
@@ -95,7 +98,6 @@ body::before {
   backdrop-filter: blur(14px);
   letter-spacing: -.02em;
   font-family: inherit;
-  transition: background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
 }
 .view-btn:hover {
   background: rgba(255,255,255,.14);
