@@ -18,7 +18,7 @@ const state = {
   roof:      'Panel sándwich pizarra',
   roofKey:   'panel',
   roofColor: '#2c3031',
-  slope:     0.12,
+  slope:     0,
 
   // Camera state (radians / scale)
   yaw:         -0.72,

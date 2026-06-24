@@ -293,13 +293,6 @@ function drawPergola() {
   drawDimension(project, { x:  W/2+.76,   y: 0, z: -L/2     }, { x:  W/2+.76,   y: 0, z:  L/2     }, `${fmt(state.length)} m largo`, { x: 36, y:  0 });
   drawDimension(project, { x: -W/2-.68,   y: 0, z: -L/2-.68 }, { x: -W/2-.68,   y: H, z: -L/2-.68 }, `${fmt(state.height)} m alto`,  { x:-26, y:  0 });
 
-  ctx.save();
-  ctx.fillStyle = 'rgba(255,255,255,.60)';
-  ctx.font = '700 12px Inter, system-ui, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('Arrastra para orbitar en 3D · silueta 1,80 m para escala · rueda o pellizca para zoom · doble clic para reset', w * 0.5, h - 26);
-  ctx.restore();
-
   requestAnimationFrame(drawPergola);
 }
 

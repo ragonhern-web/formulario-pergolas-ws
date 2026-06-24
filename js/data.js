@@ -20,8 +20,8 @@ const IRONS = [
 // Roof / cover options.
 // imagePath: set to a relative path like 'assets/images/roofs/panel-sandwich.png' once images are uploaded.
 const ROOFS = [
-  { name: 'Panel sándwich pizarra', key: 'panel', desc: 'Cubierta sólida y discreta.',  color: '#2c3031', slope: 0.12, imagePath: null },
-  { name: 'PVC imitación madera',   key: 'wood',  desc: 'Interior cálido tipo chill out.', color: '#866340', slope: 0.10, imagePath: null },
-  { name: 'Policarbonato',          key: 'poly',  desc: 'Ligero, luminoso y funcional.', color: '#aeb8b5', slope: 0.08, imagePath: null },
-  { name: 'Lamas de aluminio',      key: 'slats', desc: 'Aspecto más arquitectónico.',   color: '#3b4243', slope: 0.06, imagePath: null }
+  { name: 'Panel sándwich pizarra', key: 'panel', desc: 'Cubierta sólida y discreta.',     color: '#2c3031', slope: 0, imagePath: null },
+  { name: 'PVC imitación madera',   key: 'wood',  desc: 'Interior cálido tipo chill out.', color: '#866340', slope: 0, imagePath: null },
+  { name: 'Policarbonato',          key: 'poly',  desc: 'Ligero, luminoso y funcional.',   color: '#aeb8b5', slope: 0, imagePath: null },
+  { name: 'Lamas de aluminio',      key: 'slats', desc: 'Aspecto más arquitectónico.',     color: '#3b4243', slope: 0, imagePath: null }
 ];
