@@ -2,16 +2,26 @@
   html, body { overflow: auto; }
   .app { height: auto; min-height: 100vh; grid-template-columns: 1fr; }
 
-  /* ── 3D VISUAL: bloque normal en móvil, se desplaza con la página ──────── */
+  /* ── 3D VISUAL: siempre fijo en la parte superior en móvil ─────────────── */
   .visual {
-    position: relative;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
     height: 54vh;
     min-height: 340px;
+    z-index: 20;
+    background: #030505;
+    overflow: hidden;
   }
   .visual::after { display: none; }
 
-  /* Spacer no necesario en móvil sin PiP */
-  .visual-spacer { display: none; }
+  /* Spacer ocupa el espacio del visor fijo para que el formulario quede debajo */
+  .visual-spacer {
+    display: block;
+    height: 54vh;
+    min-height: 340px;
+  }
 
   .topbar { left: 16px; right: 16px; top: 14px; }
   .ghost-pill { display: none; }
