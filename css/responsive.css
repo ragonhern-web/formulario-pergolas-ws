@@ -42,4 +42,12 @@
   .cards { grid-template-columns: 1fr; }
   .two   { grid-template-columns: 1fr; }
   .toast { left: 18px; right: 18px; bottom: 18px; }
+
+  /* Botón Continuar: fluye con el contenido, no fijo al fondo */
+  .nav {
+    position: relative;
+    bottom: auto;
+    background: none;
+    padding-top: 0;
+  }
 }
