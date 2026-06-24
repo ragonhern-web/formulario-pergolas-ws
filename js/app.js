@@ -43,22 +43,22 @@ $('nextBtn').addEventListener('click', () => {
 // ── MOBILE PICTURE-IN-PICTURE VIEWER ─────────────────────────────────────────
 // When the user scrolls down on mobile the 3D viewer shrinks to a floating
 // corner window so the form is fully readable while changes remain visible live.
+//
+// Threshold = 12% of viewport height (min 60 px). This is well within the
+// actual scrollable range on any phone, so the mini mode is always reachable.
 
 (function initMiniViewer() {
   if (window.innerWidth > 980) return;
 
-  const visual  = document.querySelector('.visual');
-  const spacer  = document.querySelector('.visual-spacer');
-  // Activate mini mode once the user has scrolled past 30% of the visual height
-  const threshold = () => (spacer ? spacer.offsetHeight : window.innerHeight * 0.54) * 0.30;
+  const visual    = document.querySelector('.visual');
+  const threshold = Math.max(60, window.innerHeight * 0.12);
 
   function onScroll() {
-    visual.classList.toggle('mini', window.scrollY > threshold());
+    // pageYOffset is the cross-browser fallback for scrollY
+    visual.classList.toggle('mini', (window.pageYOffset || window.scrollY) > threshold);
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
-
-  // Re-evaluate if the window is resized across the mobile breakpoint
   window.addEventListener('resize', () => {
     if (window.innerWidth > 980) visual.classList.remove('mini');
   });
