@@ -28,6 +28,12 @@ const state = {
   zoom:         1,
   targetZoom:   1,
 
+  // Camera look-at offset in world space — (0,0,0) = scene centre / ground level.
+  // Set targetFocus* to shift which point is centred on screen; lerped each frame.
+  focusX: 0, targetFocusX: 0,
+  focusY: 0, targetFocusY: 0,
+  focusZ: 0, targetFocusZ: 0,
+
   // Contact form values
   contact: {}
 };

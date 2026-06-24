@@ -21,9 +21,12 @@ const activePointers = new Map();
 function getDistance(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
 
 function resetView() {
-  state.targetYaw   = PRESET_VIEWS.iso.yaw;
-  state.targetPitch = PRESET_VIEWS.iso.pitch;
-  state.targetZoom  = PRESET_VIEWS.iso.zoom;
+  state.targetYaw        = PRESET_VIEWS.iso.yaw;
+  state.targetPitch      = PRESET_VIEWS.iso.pitch;
+  state.targetZoom       = PRESET_VIEWS.iso.zoom;
+  state.targetFocusX     = 0;
+  state.targetFocusY     = 0;
+  state.targetFocusZ     = 0;
   // Reflect active state on buttons
   document.querySelectorAll('[data-view]').forEach(b =>
     b.classList.toggle('active', b.dataset.view === 'iso')
@@ -98,9 +101,13 @@ document.querySelectorAll('[data-view]').forEach(btn => {
   btn.addEventListener('click', () => {
     const v = PRESET_VIEWS[btn.dataset.view];
     if (!v) return;
-    state.targetYaw   = v.yaw;
-    state.targetPitch = v.pitch;
-    state.targetZoom  = v.zoom;
+    state.targetYaw    = v.yaw;
+    state.targetPitch  = v.pitch;
+    state.targetZoom   = v.zoom;
+    // Manual view always resets the focus to scene centre
+    state.targetFocusX = 0;
+    state.targetFocusY = 0;
+    state.targetFocusZ = 0;
     document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   });

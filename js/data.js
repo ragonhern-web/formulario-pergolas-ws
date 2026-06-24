@@ -25,3 +25,13 @@ const ROOFS = [
   { name: 'Policarbonato',          key: 'poly',  desc: 'Ligero, luminoso y funcional.',   color: '#aeb8b5', slope: 0, imagePath: null },
   { name: 'Lamas de aluminio',      key: 'slats', desc: 'Aspecto más arquitectónico.',     color: '#3b4243', slope: 0, imagePath: null }
 ];
+
+// Automatic camera position for each form step.
+// yaw/pitch/zoom: same units as state.js. fx/fy/fz: world-space look-at offset in metres
+// (0,0,0 keeps the scene origin centred; positive fy shifts focus upward toward the roof).
+const STEP_CAMERAS = {
+  1: { yaw: -0.72, pitch: -0.62, zoom: 1.00, fx: 0,   fy: 0,   fz: 0   },
+  2: { yaw: -0.85, pitch: -0.40, zoom: 1.26, fx: 0,   fy: 1.0, fz: 0.2 },
+  3: { yaw: -0.60, pitch: -0.95, zoom: 1.12, fx: 0,   fy: 2.0, fz: 0   },
+  4: { yaw: -0.72, pitch: -0.58, zoom: 0.90, fx: 0,   fy: 0,   fz: 0   }
+};
