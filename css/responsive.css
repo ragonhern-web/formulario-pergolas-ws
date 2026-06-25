@@ -67,6 +67,8 @@
     border-top: 1px solid var(--line);
     padding: 20px;
     overflow: visible;
+    /* Deja hueco igual al visor sticky para que scrollIntoView lo posicione justo debajo */
+    scroll-margin-top: max(56vh, 400px);
   }
   .panel-title h2 { font-size: 28px; }
 
