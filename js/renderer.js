@@ -227,27 +227,128 @@ function drawBox3D(project, x0, y0, z0, x1, y1, z1, fillTop, fillSide, stk) {
   faces.forEach(f => drawPoly(f.proj, f.f, sk, 1));
 }
 
-// Parking: minimalist modern car centred under the pergola
+// Parking: detailed 3D car (Tesla-inspired sedan) — rotates with the camera
 function drawParkingScene(project, W, L) {
-  const cW  = Math.min(W * 0.27, 0.80);   // half-width
-  const cL  = Math.min(L * 0.44, 1.95);   // half-length (along Z axis)
-  const yG  = 0.26, yT = yG + 0.60;       // body ground & top
-  const yCb = yT + 0.50;                   // cabin roof
-  const cbZ0 = -cL * 0.54, cbZ1 = cL * 0.38;
+  const cW = Math.min(W * 0.26, 0.80);   // half car width
+  const cL = Math.min(L * 0.44, 1.92);   // half car length (+z = front)
 
-  const bt = 'rgba(210,220,226,.18)', bs = 'rgba(190,202,212,.11)', bk = 'rgba(255,255,255,.22)';
-  const ct = 'rgba(190,206,218,.16)', cs = 'rgba(172,188,202,.10)', ck = 'rgba(255,255,255,.24)';
+  // ── Key z positions ───────────────────────────────────────────
+  const zF   =  cL,           // front nose tip
+        zCwl =  cL * 0.48,    // cowl / A-pillar base
+        zRF  =  cL * 0.37,    // roof front edge
+        zRRf = -cL * 0.28,    // roof rear edge / C-pillar top
+        zCP  = -cL * 0.36,    // C-pillar base (trunk hinge)
+        zR   = -cL,           // rear tip
+        zFax =  cL * 0.62,    // front axle
+        zRax = -cL * 0.53;    // rear axle
 
-  drawBox3D(project, -cW, yG, -cL, cW, yT, cL, bt, bs, bk);         // lower body
-  drawBox3D(project, -cW*0.79, yT, cbZ0, cW*0.79, yCb, cbZ1, ct, cs, ck); // cabin
-  // windshield + rear-window slope hints
-  line(project({x:-cW*0.79,y:yT,z:cbZ1}), project({x:-cW*0.79,y:yCb,z:cbZ1-0.24}), 'rgba(255,255,255,.28)', 1.2);
-  line(project({x: cW*0.79,y:yT,z:cbZ1}), project({x: cW*0.79,y:yCb,z:cbZ1-0.24}), 'rgba(255,255,255,.28)', 1.2);
-  line(project({x:-cW*0.79,y:yT,z:cbZ0}), project({x:-cW*0.79,y:yCb,z:cbZ0+0.18}), 'rgba(255,255,255,.18)', 1);
-  line(project({x: cW*0.79,y:yT,z:cbZ0}), project({x: cW*0.79,y:yCb,z:cbZ0+0.18}), 'rgba(255,255,255,.18)', 1);
-  // headlights / taillights accent
-  line(project({x:-cW,y:yG+0.20,z: cL}), project({x:cW,y:yG+0.20,z: cL}), 'rgba(255,248,200,.58)', 2.2);
-  line(project({x:-cW,y:yG+0.20,z:-cL}), project({x:cW,y:yG+0.20,z:-cL}), 'rgba(255,90,80,.48)',   2.0);
+  // ── Key y positions (heights) ─────────────────────────────────
+  const rW   = 0.31,          // wheel radius
+        yWC  = rW,            // wheel centre (= 0.31, touching ground)
+        yGC  = 0.13,          // body sill / underside start
+        yBd  = 0.74,          // beltline = window base
+        yNs  = 0.30,          // nose height (low, no-grille style)
+        yHd  = 0.60,          // hood surface height at cowl
+        yTk  = 0.78,          // trunk deck at C-pillar
+        yRf  = 1.42;          // roof
+
+  const wL = -(cW + 0.06),    // left wheel outer face x
+        wR =   cW + 0.06;     // right wheel outer face x
+
+  // ── Colour palette ────────────────────────────────────────────
+  const bFt = 'rgba(208,218,226,.22)', bFs = 'rgba(188,200,212,.12)', bSk = 'rgba(255,255,255,.22)';
+  const gFl = 'rgba(148,196,230,.15)', gSk = 'rgba(255,255,255,.34)';
+
+  // ── Helpers ───────────────────────────────────────────────────
+  // 4-vertex polygon face (projects each vertex before drawing)
+  function qf(p0, p1, p2, p3, fill, stk, lw) {
+    drawPoly([p0,p1,p2,p3].map(project), fill, stk || bSk, lw || 1);
+  }
+
+  // Wheel disc + 5-spoke alloy rim in the Y-Z plane at x=ax
+  function drawWheelDisc(ax, cz) {
+    const N = 22, pts = [];
+    for (let i = 0; i < N; i++) {
+      const a = (2 * Math.PI * i) / N;
+      pts.push(project({ x: ax, y: yWC + rW * Math.sin(a), z: cz + rW * Math.cos(a) }));
+    }
+    // tyre (dark outer ring)
+    _beginPath(pts);
+    ctx.fillStyle = 'rgba(20,24,27,.92)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.14)'; ctx.lineWidth = 0.8; ctx.stroke();
+    // rim (lighter inner)
+    const rr = rW * 0.60, rim = [];
+    for (let i = 0; i < N; i++) {
+      const a = (2 * Math.PI * i) / N;
+      rim.push(project({ x: ax, y: yWC + rr * Math.sin(a), z: cz + rr * Math.cos(a) }));
+    }
+    _beginPath(rim);
+    ctx.fillStyle = 'rgba(152,168,182,.32)'; ctx.fill();
+    // 5 spokes
+    for (let i = 0; i < 5; i++) {
+      const a = (2 * Math.PI * i) / 5 + 0.28;
+      const tip = project({ x: ax, y: yWC + rr * 0.88 * Math.sin(a), z: cz + rr * 0.88 * Math.cos(a) });
+      const hub = project({ x: ax, y: yWC + rr * 0.16 * Math.sin(a), z: cz + rr * 0.16 * Math.cos(a) });
+      line(hub, tip, 'rgba(205,220,232,.56)', 2.8);
+    }
+    // centre cap
+    const capR = rW * 0.09, cap = [];
+    for (let i = 0; i < 8; i++) {
+      const a = (2 * Math.PI * i) / 8;
+      cap.push(project({ x: ax, y: yWC + capR * Math.sin(a), z: cz + capR * Math.cos(a) }));
+    }
+    _beginPath(cap); ctx.fillStyle = 'rgba(220,230,238,.65)'; ctx.fill();
+  }
+
+  // ── 1. Rear wheels (drawn first — furthest from camera) ───────
+  drawWheelDisc(wL, zRax);
+  drawWheelDisc(wR, zRax);
+
+  // ── 2. Lower body (full-length slab) ─────────────────────────
+  drawBox3D(project, -cW, yGC, zR, cW, yBd, zF, bFt, bFs, bSk);
+
+  // ── 3. Hood (slopes from beltline at cowl down to low nose) ──
+  qf({x:-cW,y:yHd,z:zCwl},{x:cW,y:yHd,z:zCwl},{x:cW,y:yNs,z:zF},{x:-cW,y:yNs,z:zF}, bFt, bSk);        // top surface
+  qf({x:-cW,y:yBd,z:zCwl},{x:-cW,y:yHd,z:zCwl},{x:-cW,y:yNs,z:zF},{x:-cW,y:yBd,z:zF}, bFs, bSk);      // left cheek
+  qf({x: cW,y:yBd,z:zCwl},{x: cW,y:yHd,z:zCwl},{x: cW,y:yNs,z:zF},{x: cW,y:yBd,z:zF}, bFs, bSk);      // right cheek
+
+  // ── 4. Trunk lid (fastback slope from C-pillar to rear) ───────
+  const yRr = yBd - 0.04;
+  qf({x:-cW,y:yTk,z:zCP},{x:cW,y:yTk,z:zCP},{x:cW,y:yRr,z:zR},{x:-cW,y:yRr,z:zR}, bFt, bSk);
+  qf({x:-cW,y:yBd,z:zCP},{x:-cW,y:yTk,z:zCP},{x:-cW,y:yRr,z:zR},{x:-cW,y:yBd,z:zR}, bFs, bSk);
+  qf({x: cW,y:yBd,z:zCP},{x: cW,y:yTk,z:zCP},{x: cW,y:yRr,z:zR},{x: cW,y:yBd,z:zR}, bFs, bSk);
+
+  // ── 5. Cabin box (A-pillar base to C-pillar top) ──────────────
+  drawBox3D(project, -cW*0.88, yBd, zRRf, cW*0.88, yRf, zRF, bFt, bFs, bSk);
+
+  // ── 6. Windshield (angled glass panel, A-pillar) ─────────────
+  qf({x:-cW*.88,y:yBd,z:zCwl},{x:cW*.88,y:yBd,z:zCwl},{x:cW*.85,y:yRf,z:zRF},{x:-cW*.85,y:yRf,z:zRF}, gFl, gSk, 1.4);
+
+  // ── 7. Rear window (C-pillar slope) ──────────────────────────
+  qf({x:-cW*.88,y:yBd,z:zCP},{x:cW*.88,y:yBd,z:zCP},{x:cW*.85,y:yRf,z:zRRf},{x:-cW*.85,y:yRf,z:zRRf}, gFl, gSk, 1.4);
+
+  // ── 8. Side windows ───────────────────────────────────────────
+  qf({x:-cW*.88,y:yBd,z:zCwl},{x:-cW*.88,y:yBd,z:zCP},{x:-cW*.85,y:yRf,z:zRRf},{x:-cW*.85,y:yRf,z:zRF}, gFl, gSk, 1.2);
+  qf({x: cW*.88,y:yBd,z:zCwl},{x: cW*.88,y:yBd,z:zCP},{x: cW*.85,y:yRf,z:zRRf},{x: cW*.85,y:yRf,z:zRF}, gFl, gSk, 1.2);
+
+  // ── 9. Roof panel ─────────────────────────────────────────────
+  qf({x:-cW*.85,y:yRf,z:zRRf},{x:cW*.85,y:yRf,z:zRRf},{x:cW*.85,y:yRf,z:zRF},{x:-cW*.85,y:yRf,z:zRF},
+    'rgba(218,228,234,.24)', 'rgba(255,255,255,.28)', 1);
+
+  // ── 10. B-pillar (door divider line) ─────────────────────────
+  const zBp = zCwl - (zCwl - zCP) * 0.44;
+  line(project({x:-cW*.89,y:yBd,z:zBp}), project({x:-cW*.89,y:yRf,z:zBp}), 'rgba(255,255,255,.22)', 1.2);
+  line(project({x: cW*.89,y:yBd,z:zBp}), project({x: cW*.89,y:yRf,z:zBp}), 'rgba(255,255,255,.22)', 1.2);
+
+  // ── 11. Headlight strip ───────────────────────────────────────
+  line(project({x:-cW*.88,y:yNs+0.14,z:zF}), project({x:cW*.88,y:yNs+0.14,z:zF}), 'rgba(255,248,210,.78)', 3.0);
+
+  // ── 12. Taillight strip ───────────────────────────────────────
+  line(project({x:-cW*.88,y:yRr-0.05,z:zR}), project({x:cW*.88,y:yRr-0.05,z:zR}), 'rgba(255,80,65,.60)', 2.6);
+
+  // ── 13. Front wheels (drawn last — closest to camera) ────────
+  drawWheelDisc(wL, zFax);
+  drawWheelDisc(wR, zFax);
 }
 
 // Chill-out: sofa + armrests + coffee table
