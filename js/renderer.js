@@ -499,26 +499,32 @@ function drawPergola() {
     return { ...face, projected, depth };
   }).sort((a, b) => b.depth - a.depth);
 
-  // Posts — sorted so farther ones draw first
+  // Posts — sorted so farther ones draw first.
+  // isWall: true  → post lives at z=+L/2 (front, where the wall is for wall-attached)
+  // isWall: false → post lives at z=-L/2 (free-standing, always visible)
   const posts = [
-    { base: { x: corners.fl.x, y: 0, z: corners.fl.z }, top: { x: corners.fl.x, y: H, z: corners.fl.z }, attachY: yFront },
-    { base: { x: corners.fr.x, y: 0, z: corners.fr.z }, top: { x: corners.fr.x, y: H, z: corners.fr.z }, attachY: yFront },
-    { base: { x: corners.br.x, y: 0, z: corners.br.z }, top: { x: corners.br.x, y: H, z: corners.br.z }, attachY: yBack  },
-    { base: { x: corners.bl.x, y: 0, z: corners.bl.z }, top: { x: corners.bl.x, y: H, z: corners.bl.z }, attachY: yBack  }
+    { base: { x: corners.fl.x, y: 0, z: corners.fl.z }, top: { x: corners.fl.x, y: H, z: corners.fl.z }, attachY: yFront, isWall: true  },
+    { base: { x: corners.fr.x, y: 0, z: corners.fr.z }, top: { x: corners.fr.x, y: H, z: corners.fr.z }, attachY: yFront, isWall: true  },
+    { base: { x: corners.br.x, y: 0, z: corners.br.z }, top: { x: corners.br.x, y: H, z: corners.br.z }, attachY: yBack,  isWall: false },
+    { base: { x: corners.bl.x, y: 0, z: corners.bl.z }, top: { x: corners.bl.x, y: H, z: corners.bl.z }, attachY: yBack,  isWall: false }
   ].map(post => {
     const a = project(post.base), b = project(post.top);
     const depth = (a.depth + b.depth) / 2;
-    // The section of the post hidden under the roof starts where the roof meets the column
     const hiddenStart = { x: post.base.x, y: Math.max(H * 0.66, post.attachY - 0.30), z: post.base.z };
     return { ...post, depth, hiddenStart };
   }).sort((a, b) => b.depth - a.depth);
 
   const rearPosts  = posts.slice(0, 2);
   const frontPosts = posts.slice(2);
+  // Geometrically free posts (NOT at the wall) — always shown solid for wall-attached
+  const freePosts  = posts.filter(p => !p.isWall);
 
   // Draw order: rear posts → use scene → roof faces → dashed hints → front posts → trim
-  // wall-attached (wall at z=+L/2): rear posts are fully visible — draw them AFTER the roof
-  // so they appear solid, not faded; for all other modes draw them before the roof (semi-transparent).
+  //
+  // wall-attached (wall at z=+L/2):
+  //   • Posts AT the wall (isWall=true, z≈+L/2): never drawn — replaced by the wall
+  //   • Free posts (isWall=false, z≈-L/2): ALWAYS drawn solid after the roof,
+  //     identified by geometry (not camera depth) so they stay fixed when rotating.
   if (state.installationType !== 'wall-attached') {
     rearPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'rear'));
   }
@@ -549,12 +555,12 @@ function drawPergola() {
     ctx.restore();
   }
 
-  // Dashed hint (roof overlap) — only when rear posts are drawn semi-transparent (non-wall-attached)
+  // Dashed roof-overlap hint — only for normal modes (not wall-attached)
   if (state.installationType !== 'wall-attached') {
     rearPosts.forEach(post => drawPostLine(project, post.hiddenStart, post.top, iron, 'hidden'));
   }
 
-  // LED strip accent lines along front beam and right lateral
+  // LED strips
   if (state.roofKey !== 'poly') {
     if (state.installationType !== 'wall-attached') {
       line(project({ x: -W/2-.14, y: yFront+.04, z:  L/2+.18 }), project({ x:  W/2+.14, y: yFront+.04, z:  L/2+.18 }), 'rgba(255,245,196,.94)', 3);
@@ -562,12 +568,12 @@ function drawPergola() {
     line(project({ x:  W/2+.16, y: yBack +.04, z: -L/2+.10 }), project({ x:  W/2+.16, y: yFront+.04, z:  L/2+.18 }), 'rgba(255,245,196,.74)', 2.2);
   }
 
-  // wall-attached: rear posts are NOT behind any wall — draw them solid after the roof
+  // wall-attached: draw only the 2 free posts (z≈-L/2) — solid, after the roof, always
   if (state.installationType === 'wall-attached') {
-    rearPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'front'));
+    freePosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'front'));
   }
 
-  // wall-attached: front posts (z=+L/2) are replaced by the wall — skip them
+  // All other modes: draw front posts normally (closest to camera, after roof)
   if (state.installationType !== 'wall-attached') {
     frontPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'front'));
   }
