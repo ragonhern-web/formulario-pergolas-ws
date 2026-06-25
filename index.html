@@ -11,20 +11,13 @@
   <main class="app">
 
     <!-- LEFT: 3D interactive visualisation -->
-    <section class="visual" id="visualPreview" aria-label="Vista dinámica de la pérgola">
+    <section class="visual" aria-label="Vista dinámica de la pérgola">
       <div class="topbar">
         <div class="brand" aria-label="Welding Systems">
           <div class="mark"></div>
           <div>Welding<br><small>Systems</small></div>
         </div>
         <div class="ghost-pill">Arrastra · zoom · doble clic para reset</div>
-      </div>
-
-      <!-- View preset buttons — desktop only, hidden on mobile via responsive.css -->
-      <div class="view-controls" aria-label="Vistas predefinidas">
-        <button class="view-btn active" data-view="iso">Isométrica</button>
-        <button class="view-btn" data-view="front">Frontal</button>
-        <button class="view-btn" data-view="side">Lateral</button>
       </div>
 
       <div class="canvas-wrap">
@@ -38,9 +31,6 @@
         <div class="metric"><span>Techo</span><strong id="mRoof" style="font-size:17px;letter-spacing:-.04em">Panel</strong></div>
       </div>
     </section>
-
-    <!-- Spacer: preserves the layout height of .visual when it becomes position:fixed on mobile -->
-    <div class="visual-spacer" aria-hidden="true"></div>
 
     <!-- RIGHT: step-by-step form panel -->
     <aside class="panel">
@@ -89,7 +79,6 @@
               <button class="chip" data-preset="4,6,2.8">4×6 m</button>
               <button class="chip" data-preset="6,8,3">6×8 m</button>
             </div>
-
           </div>
 
           <!-- Step 2: Iron finish — cards injected by renderIronCards() -->

@@ -21,17 +21,13 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
   };
 }
 
-let _canvasW = 0, _canvasH = 0;
-
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
   canvas.width  = Math.round(rect.width  * DPR);
   canvas.height = Math.round(rect.height * DPR);
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  _canvasW = rect.width;
-  _canvasH = rect.height;
 }
-// Initial size
+window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 // ── PROJECTION ────────────────────────────────────────────────────────────────
@@ -45,15 +41,11 @@ function getProjector(w, h) {
   const origin  = { x: w * 0.50, y: h * 0.61 };
 
   return function project(pt) {
-    // Subtract the look-at focus offset so the focused point appears centred
-    const px = pt.x - state.focusX;
-    const py = pt.y - state.focusY;
-    const pz = pt.z - state.focusZ;
     // Yaw around vertical Y, then pitch around X
-    const x1 = px * cosy - pz * siny;
-    const z1 = px * siny + pz * cosy;
-    const y2 = py * cosp - z1 * sinp;
-    const z2 = py * sinp + z1 * cosp;
+    const x1 = pt.x * cosy - pt.z * siny;
+    const z1 = pt.x * siny + pt.z * cosy;
+    const y2 = pt.y * cosp - z1 * sinp;
+    const z2 = pt.y * sinp + z1 * cosp;
     const cz = z2 + camDist;
     const s  = focal / cz;
     return { x: origin.x + x1 * s, y: origin.y - y2 * s, depth: cz, scale: s };
@@ -174,9 +166,6 @@ function drawPostLine(project, start3, end3, color, mode = 'front') {
 function drawPergola() {
   const rect = canvas.getBoundingClientRect();
   const w = rect.width, h = rect.height;
-  // Resize the backing bitmap whenever the canvas element changes size
-  // (covers window resize AND CSS transitions like the mobile PiP animation)
-  if (w !== _canvasW || h !== _canvasH) resizeCanvas();
   ctx.clearRect(0, 0, w, h);
 
   // Animate display values towards state targets
@@ -188,9 +177,6 @@ function drawPergola() {
   state.targetPitch = clamp(state.targetPitch, -1.18, 0);
   state.pitch    = lerp(state.pitch,    state.targetPitch,  0.16);
   state.zoom     = lerp(state.zoom,     state.targetZoom,   0.16);
-  state.focusX   = lerp(state.focusX,   state.targetFocusX, 0.14);
-  state.focusY   = lerp(state.focusY,   state.targetFocusY, 0.14);
-  state.focusZ   = lerp(state.focusZ,   state.targetFocusZ, 0.14);
 
   const project = getProjector(w, h);
   const W = display.width, L = display.length, H = display.height;

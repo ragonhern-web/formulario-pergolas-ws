@@ -1,54 +1,77 @@
 @media (max-width: 980px) {
   html, body { overflow: auto; }
+
   .app { height: auto; min-height: 100vh; grid-template-columns: 1fr; }
 
-  /* ── 3D VISUAL: siempre fijo en la parte superior en móvil ──────────────
-     La altura la controla JS (--visual-h) para una reducción progresiva al
-     hacer scroll. El spacer siempre coincide con esa misma altura.          */
+  /* ── 3D VISUAL: opaque, sticky, always visible at top ────────────── */
   .visual {
-    position: fixed;
+    height: 56vh;
+    min-height: 400px;
+    position: sticky;
     top: 0;
-    right: 0;
-    width: 100%;
-    height: var(--visual-h, 54vh);
-    z-index: 20;
-    background: #030505;
-    overflow: hidden;
+    z-index: 10;
+    background: #030505; /* solid — no transparency bleed from body gradient */
   }
-  .visual::after { display: none; }
 
-  /* Spacer: tamaño fijo siempre, independiente del tamaño actual del visor */
-  .visual-spacer {
-    display: block;
-    height: 54vh;
-    min-height: 340px;
-  }
+  /* Remove the dark vignette overlay — it made the canvas look muddy on mobile */
+  .visual::after { display: none; }
 
   .topbar { left: 16px; right: 16px; top: 14px; }
   .ghost-pill { display: none; }
-  .view-controls { display: none; }
-  .canvas-wrap { top: 0; left: 0; right: 0; bottom: 0; }
-  .dimension-card { display: none; }
 
-  /* ── FORM PANEL ──────────────────────────────────────────────────────── */
+  /* Canvas fills the visual except the 66px reserved for the metrics bar below */
+  .canvas-wrap { top: 0; left: 0; right: 0; bottom: 66px; }
+
+  /* ── METRICS BAR: horizontal strip at the bottom of the visual ───── */
+  /* Sits below the canvas, fully opaque so it never overlaps the 3D view */
+  .dimension-card {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 66px;
+    background: #030505;
+    border-top: 1px solid rgba(255, 255, 255, .10);
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0;
+    padding: 0;
+    max-width: none;
+    align-items: stretch;
+    justify-content: stretch;
+    backdrop-filter: none;
+  }
+
+  .metric {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    border-right: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 0;
+    min-width: 0;
+    padding: 6px 8px;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+  .metric:last-child { border-right: 0; }
+  .metric span   { font-size: 9px;  margin-bottom: 3px; }
+  .metric strong { font-size: 15px; letter-spacing: -.05em; }
+  .metric em     { font-size: 10px; margin-left: 2px; }
+
+  /* ── FORM PANEL: below the visual, scrollable ───────────────────── */
   .panel {
     height: auto;
-    min-height: 60vh;
     border-left: 0;
     border-top: 1px solid var(--line);
     padding: 20px;
     overflow: visible;
   }
   .panel-title h2 { font-size: 28px; }
+
   .cards { grid-template-columns: 1fr; }
   .two   { grid-template-columns: 1fr; }
-  .toast { left: 18px; right: 18px; bottom: 18px; }
 
-  /* Botón Continuar: fluye con el contenido, no fijo al fondo */
-  .nav {
-    position: relative;
-    bottom: auto;
-    background: none;
-    padding-top: 0;
-  }
+  .toast { left: 18px; right: 18px; bottom: 18px; }
 }

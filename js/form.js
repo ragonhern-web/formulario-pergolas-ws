@@ -70,33 +70,6 @@ function setStep(step) {
   if (state.step === 2) renderIronCards();
   if (state.step === 3) renderRoofCards();
   updateSummary();
-  applyStepCamera(state.step);
-  // Móvil: encoger visor si hace falta y scroll al top del panel
-  if (window.innerWidth <= 980) {
-    if (typeof applyVisualSize === 'function') applyVisualSize();
-    const panel = document.querySelector('.panel');
-    if (panel) window.scrollTo({ top: panel.offsetTop, behavior: 'smooth' });
-  }
-}
-
-function applyStepCamera(step) {
-  const cam = STEP_CAMERAS[step];
-  if (!cam) return;
-  state.viewMode    = cam.name;
-  state.targetYaw   = cam.yaw;
-  state.targetPitch = cam.pitch;
-  state.targetZoom  = cam.zoom;
-  if (cam.focus) {
-    setCameraFocus(cam.focus);
-  } else {
-    resetCameraFocus();
-  }
-  updateViewButtons();
-  // Paso 1 = vista isométrica: marcar el botón iso como activo
-  if (step === 1) {
-    const isoBtn = document.querySelector('[data-view="iso"]');
-    if (isoBtn) isoBtn.classList.add('active');
-  }
 }
 
 function updateSummary() {
