@@ -416,8 +416,11 @@ function drawPergola() {
   const frontPosts = posts.slice(2);
 
   // Draw order: rear posts → use scene → roof faces → dashed hints → front posts → trim
-  // wall-attached (wall now at z=+L/2): front posts replaced by wall — draw rear posts normally
-  rearPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'rear'));
+  // wall-attached (wall at z=+L/2): rear posts are fully visible — draw them AFTER the roof
+  // so they appear solid, not faded; for all other modes draw them before the roof (semi-transparent).
+  if (state.installationType !== 'wall-attached') {
+    rearPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'rear'));
+  }
 
   // Use-scene objects (furniture / car / panels) — visible from step 5 onward
   if (state.step >= 5) drawUseScene(project, W, L, H);
@@ -445,8 +448,10 @@ function drawPergola() {
     ctx.restore();
   }
 
-  // Dashed hint for the portion of rear posts hidden behind the roof
-  rearPosts.forEach(post => drawPostLine(project, post.hiddenStart, post.top, iron, 'hidden'));
+  // Dashed hint (roof overlap) — only when rear posts are drawn semi-transparent (non-wall-attached)
+  if (state.installationType !== 'wall-attached') {
+    rearPosts.forEach(post => drawPostLine(project, post.hiddenStart, post.top, iron, 'hidden'));
+  }
 
   // LED strip accent lines along front beam and right lateral
   if (state.roofKey !== 'poly') {
@@ -456,7 +461,12 @@ function drawPergola() {
     line(project({ x:  W/2+.16, y: yBack +.04, z: -L/2+.10 }), project({ x:  W/2+.16, y: yFront+.04, z:  L/2+.18 }), 'rgba(255,245,196,.74)', 2.2);
   }
 
-  // wall-attached: front posts (at z=+L/2) replaced by the wall — skip them
+  // wall-attached: rear posts are NOT behind any wall — draw them solid after the roof
+  if (state.installationType === 'wall-attached') {
+    rearPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'front'));
+  }
+
+  // wall-attached: front posts (z=+L/2) are replaced by the wall — skip them
   if (state.installationType !== 'wall-attached') {
     frontPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'front'));
   }
