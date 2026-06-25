@@ -40,21 +40,42 @@ $('nextBtn').addEventListener('click', () => {
   });
 });
 
-// ── MÓVIL: reducir visor al hacer scroll o en pasos 2+ ───────────────────────
-// Compact = scroll > 40px O paso actual > 1. setStep() también lo llama.
-function updateCompactState() {
-  if (window.innerWidth > 980) { document.body.classList.remove('visual-compact'); return; }
-  const scrolled = (window.pageYOffset || window.scrollY) > 40;
-  document.body.classList.toggle('visual-compact', scrolled || state.step > 1);
+// ── MÓVIL: reducción progresiva del visor al hacer scroll ────────────────────
+// En paso 1: interpolación continua 54vh → 36vh en los primeros 160px de scroll.
+// En pasos 2+: siempre 36vh independientemente del scroll.
+// JS escribe --visual-h en :root y CSS lo aplica al visual y al spacer.
+
+let _vizRafPending = false;
+
+function applyVisualSize() {
+  if (window.innerWidth > 980) {
+    document.documentElement.style.removeProperty('--visual-h');
+    return;
+  }
+  const maxH    = window.innerHeight * 0.54;
+  const minH    = window.innerHeight * 0.36;
+  const scrollY = window.pageYOffset || window.scrollY;
+  let h;
+  if (state.step > 1) {
+    h = minH;
+  } else {
+    const t = Math.min(Math.max(scrollY, 0) / 160, 1);
+    h = maxH - (maxH - minH) * t;
+  }
+  document.documentElement.style.setProperty('--visual-h', Math.round(h) + 'px');
+  _vizRafPending = false;
 }
 
-(function initCompactVisual() {
+(function initVisualResize() {
   if (window.innerWidth > 980) return;
-  window.addEventListener('scroll', updateCompactState, { passive: true });
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 980) document.body.classList.remove('visual-compact');
-    else updateCompactState();
-  });
+  applyVisualSize(); // valor inicial
+  window.addEventListener('scroll', () => {
+    if (!_vizRafPending) {
+      _vizRafPending = true;
+      requestAnimationFrame(applyVisualSize);
+    }
+  }, { passive: true });
+  window.addEventListener('resize', applyVisualSize);
 })();
 
 // Initialise

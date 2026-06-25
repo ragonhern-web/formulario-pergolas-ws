@@ -71,10 +71,10 @@ function setStep(step) {
   if (state.step === 3) renderRoofCards();
   updateSummary();
   applyStepCamera(state.step);
-  // Móvil: compact en pasos 2+ y scroll al inicio para ver el título del paso
+  // Móvil: actualizar tamaño del visor y scroll suave al inicio del nuevo paso
   if (window.innerWidth <= 980) {
-    document.body.classList.toggle('visual-compact', state.step > 1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof applyVisualSize === 'function') applyVisualSize();
+    requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
   }
 }
 

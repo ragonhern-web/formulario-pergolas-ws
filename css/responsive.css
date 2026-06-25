@@ -2,37 +2,25 @@
   html, body { overflow: auto; }
   .app { height: auto; min-height: 100vh; grid-template-columns: 1fr; }
 
-  /* ── 3D VISUAL: siempre fijo en la parte superior en móvil ─────────────── */
+  /* ── 3D VISUAL: siempre fijo en la parte superior en móvil ──────────────
+     La altura la controla JS (--visual-h) para una reducción progresiva al
+     hacer scroll. El spacer siempre coincide con esa misma altura.          */
   .visual {
     position: fixed;
     top: 0;
     right: 0;
     width: 100%;
-    height: 54vh;
-    min-height: 340px;
+    height: var(--visual-h, 54vh);
     z-index: 20;
     background: #030505;
     overflow: hidden;
-    transition: height .4s ease, min-height .4s ease;
   }
   .visual::after { display: none; }
 
-  /* Spacer ocupa el espacio del visor fijo para que el formulario quede debajo */
+  /* Spacer ocupa el mismo espacio que el visor fijo */
   .visual-spacer {
     display: block;
-    height: 54vh;
-    min-height: 340px;
-    transition: height .4s ease, min-height .4s ease;
-  }
-
-  /* Al hacer scroll, el visor se reduce ligeramente para mostrar más formulario */
-  body.visual-compact .visual {
-    height: 36vh;
-    min-height: 210px;
-  }
-  body.visual-compact .visual-spacer {
-    height: 36vh;
-    min-height: 210px;
+    height: var(--visual-h, 54vh);
   }
 
   .topbar { left: 16px; right: 16px; top: 14px; }
@@ -41,7 +29,7 @@
   .canvas-wrap { top: 0; left: 0; right: 0; bottom: 0; }
   .dimension-card { display: none; }
 
-  /* ── FORM PANEL ─────────────────────────────────────────────────────────── */
+  /* ── FORM PANEL ──────────────────────────────────────────────────────── */
   .panel {
     height: auto;
     min-height: 60vh;
