@@ -14,6 +14,10 @@ function resetView() {
   state.targetYaw   = -0.72;
   state.targetPitch = -0.62;
   state.targetZoom  = 1;
+  resetCameraFocus();
+  updateViewButtons();
+  const isoBtn = document.querySelector('[data-view="iso"]');
+  if (isoBtn) isoBtn.classList.add('active');
 }
 
 canvas.addEventListener('pointerdown', (e) => {
@@ -38,7 +42,7 @@ canvas.addEventListener('pointermove', (e) => {
   if (activePointers.size === 2) {
     const pts  = [...activePointers.values()];
     const dist = getDistance(pts[0], pts[1]);
-    if (pinchStartDist) state.targetZoom = clamp(pinchStartZoom * (dist / pinchStartDist), 0.72, 1.48);
+    if (pinchStartDist) state.targetZoom = clamp(pinchStartZoom * (dist / pinchStartDist), 0.38, 3.2);
     return;
   }
 
@@ -72,5 +76,24 @@ canvas.addEventListener('pointerleave',  (e) => { if (!activePointers.has(e.poin
 canvas.addEventListener('dblclick',      resetView);
 canvas.addEventListener('wheel', (e) => {
   e.preventDefault();
-  state.targetZoom = clamp(state.targetZoom - Math.sign(e.deltaY) * 0.08, 0.72, 1.48);
+  state.targetZoom = clamp(state.targetZoom - Math.sign(e.deltaY) * 0.12, 0.38, 3.2);
 }, { passive: false });
+
+// View preset buttons (step 1 panel)
+const VIEW_PRESETS = {
+  iso:   { yaw: -0.72, pitch: -0.62, zoom: 1.0 },
+  front: { yaw:  0,    pitch: -0.55, zoom: 1.1 },
+  side:  { yaw:  Math.PI / 2, pitch: -0.55, zoom: 1.1 }
+};
+document.querySelectorAll('[data-view]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const v = VIEW_PRESETS[btn.dataset.view];
+    if (!v) return;
+    state.targetYaw   = v.yaw;
+    state.targetPitch = v.pitch;
+    state.targetZoom  = v.zoom;
+    resetCameraFocus();
+    updateViewButtons();
+    btn.classList.add('active');
+  });
+});

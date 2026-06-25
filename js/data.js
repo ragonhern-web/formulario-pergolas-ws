@@ -17,6 +17,14 @@ const IRONS = [
   { name: 'Efecto corten', desc: 'Industrial cálido con carácter.', color: '#8a4c2e', profile: '120×120 mm', imagePath: null }
 ];
 
+// Per-step camera presets — applied automatically when navigating steps.
+const STEP_CAMERAS = {
+  1: { yaw: -0.72, pitch: -0.62, zoom: 1.00 },
+  2: { yaw: -0.85, pitch: -0.40, zoom: 1.26, focus: { x: 0, y: 1.0, z: 0 } },
+  3: { yaw: -0.60, pitch: -0.95, zoom: 1.12, focus: { x: 0, y: 2.0, z: 0 } },
+  4: { yaw: -0.72, pitch: -0.58, zoom: 0.90 }
+};
+
 // Roof / cover options.
 // imagePath: set to a relative path like 'assets/images/roofs/panel-sandwich.png' once images are uploaded.
 const ROOFS = [

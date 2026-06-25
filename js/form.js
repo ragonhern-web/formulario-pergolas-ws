@@ -57,6 +57,35 @@ function renderRoofCards() {
   }));
 }
 
+function setCameraFocus(focus) {
+  state.targetFocusX = focus.x || 0;
+  state.targetFocusY = focus.y || 0;
+  state.targetFocusZ = focus.z || 0;
+}
+function resetCameraFocus() {
+  state.targetFocusX = 0;
+  state.targetFocusY = 0;
+  state.targetFocusZ = 0;
+}
+function updateViewButtons() {
+  document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
+}
+
+function applyStepCamera(step) {
+  const cam = STEP_CAMERAS[step];
+  if (!cam) return;
+  state.targetYaw   = cam.yaw;
+  state.targetPitch = cam.pitch;
+  state.targetZoom  = cam.zoom;
+  if (cam.focus) setCameraFocus(cam.focus);
+  else resetCameraFocus();
+  updateViewButtons();
+  if (step === 1) {
+    const isoBtn = document.querySelector('[data-view="iso"]');
+    if (isoBtn) isoBtn.classList.add('active');
+  }
+}
+
 function setStep(step) {
   state.step = Math.max(1, Math.min(4, step));
   document.querySelectorAll('.step').forEach(el => el.classList.add('hidden'));
@@ -70,6 +99,11 @@ function setStep(step) {
   if (state.step === 2) renderIronCards();
   if (state.step === 3) renderRoofCards();
   updateSummary();
+  applyStepCamera(state.step);
+  if (window.innerWidth <= 980) {
+    const panel = document.querySelector('.panel');
+    if (panel) window.scrollTo({ top: panel.offsetTop, behavior: 'smooth' });
+  }
 }
 
 function updateSummary() {

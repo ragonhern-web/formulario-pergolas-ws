@@ -28,6 +28,11 @@ const state = {
   zoom:         1,
   targetZoom:   1,
 
+  // Camera look-at offset (world units) — lerped each frame
+  focusX: 0, targetFocusX: 0,
+  focusY: 0, targetFocusY: 0,
+  focusZ: 0, targetFocusZ: 0,
+
   // Contact form values
   contact: {}
 };
