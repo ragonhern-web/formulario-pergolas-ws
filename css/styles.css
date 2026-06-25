@@ -96,7 +96,7 @@ canvas.dragging { cursor: grabbing; }
 }
 .panel-inner { min-height: 100%; display: flex; flex-direction: column; gap: 22px; }
 
-.stepper { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-top: 4px; }
+.stepper { display: grid; grid-template-columns: repeat(6,1fr); gap: 8px; margin-top: 4px; }
 .step-dot { height: 5px; border-radius: 99px; background: rgba(255,255,255,.14); overflow: hidden; }
 .step-dot span { display: block; height: 100%; width: 0; background: #fff; border-radius: 99px; transition: width .35s ease; }
 .step-dot.active span { width: 100%; }

@@ -8,10 +8,10 @@ const VALIDATION_RULES = {
   location: { required: false, pattern: null,                           msg: '' }
 };
 
-// Returns true if step is valid (or if step !== 4).
+// Returns true if step is valid (or if step !== 6).
 // Marks invalid fields with --danger border colour.
 function validateStep(step) {
-  if (step !== 5) return true;
+  if (step !== 6) return true;
   let valid = true;
   for (const [field, rule] of Object.entries(VALIDATION_RULES)) {
     const el = $(field);

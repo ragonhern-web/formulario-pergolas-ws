@@ -5,8 +5,17 @@ const STEPS_CONFIG = {
   2: ['Tipo de instalación',        'Indica cómo se va a instalar la pérgola para que el equipo pueda preparar la propuesta adecuada.'],
   3: ['Elegir el hierro',           'Selecciona el acabado visual de la estructura. La pérgola cambia de color en la vista para enseñar el resultado de forma rápida.'],
   4: ['Elegir el techo',            'Elige el tipo de cubierta. La parte superior y el interior cambian para simular el material seleccionado.'],
-  5: ['Datos de contacto',          'Deja los datos para que el equipo pueda revisar la configuración y preparar un presupuesto personalizado.']
+  5: ['Uso principal',              'Cuéntanos para qué vas a usar principalmente la pérgola. Esto nos ayuda a preparar la propuesta ideal para ti.'],
+  6: ['Datos de contacto',          'Deja los datos para que el equipo pueda revisar la configuración y preparar un presupuesto personalizado.']
 };
+
+// Use type options for step 5
+const USE_OPTIONS = [
+  { id: 'parking',        title: 'Guardar coche / parking',       desc: 'Ideal para proteger el vehículo del sol, lluvia y granizo.' },
+  { id: 'chill-out',      title: 'Terraza exterior / chill out',  desc: 'Perfecta para crear una zona cómoda de descanso al aire libre.' },
+  { id: 'dining',         title: 'Comedor exterior / barbacoa',   desc: 'Pensada para comidas, reuniones y cocina exterior.' },
+  { id: 'protected-area', title: 'Cerramiento o zona protegida',  desc: 'Ideal para crear una zona cubierta, funcional y más protegida.' }
+];
 
 // Installation type options for step 2
 const INSTALLATION_OPTIONS = [
@@ -31,7 +40,8 @@ const STEP_CAMERAS = {
   2: { yaw: -0.65, pitch: -0.52, zoom: 1.05 },
   3: { yaw: -0.90, pitch: -0.16, zoom: 1.55, focus: { x: 0, y: 1.35, z: 0 } },
   4: { yaw: -0.60, pitch: -0.95, zoom: 1.12, focus: { x: 0, y: 2.0,  z: 0 } },
-  5: { yaw: -0.72, pitch: -0.58, zoom: 0.90 }
+  5: { yaw: -0.55, pitch: -0.48, zoom: 1.10, focus: { x: 0, y: 0.40, z: 0 } },
+  6: { yaw: -0.72, pitch: -0.58, zoom: 0.90 }
 };
 
 // Roof / cover options.

@@ -24,14 +24,14 @@ document.querySelectorAll('[data-preset]').forEach(btn => {
 // Step navigation
 $('backBtn').addEventListener('click', () => setStep(state.step - 1));
 $('nextBtn').addEventListener('click', () => {
-  if (state.step < 5) {
+  if (state.step < 6) {
     setStep(state.step + 1);
   } else {
-    if (validateStep(5)) submitMock();
+    if (validateStep(6)) submitMock();
   }
 });
 
-// Contact fields (step 4) — sync to state and clear validation errors as user types
+// Contact fields (step 6) — sync to state and clear validation errors as user types
 ['name', 'phone', 'email', 'location', 'notes'].forEach(id => {
   $(id).addEventListener('input', () => {
     state.contact[id] = $(id).value;

@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Formulario visual de pérgolas | Welding Systems</title>
-  <link rel="stylesheet" href="css/styles.css?v=2" />
-  <link rel="stylesheet" href="css/responsive.css?v=2" />
+  <link rel="stylesheet" href="css/styles.css?v=3" />
+  <link rel="stylesheet" href="css/responsive.css?v=3" />
 </head>
 <body>
   <main class="app">
@@ -38,6 +38,7 @@
 
         <div class="stepper" aria-label="Progreso del formulario">
           <div class="step-dot active"><span></span></div>
+          <div class="step-dot"><span></span></div>
           <div class="step-dot"><span></span></div>
           <div class="step-dot"><span></span></div>
           <div class="step-dot"><span></span></div>
@@ -103,8 +104,13 @@
             <div class="cards" id="roofCards"></div>
           </div>
 
-          <!-- Step 5: Contact data + summary -->
+          <!-- Step 5: Use type — cards injected by renderUseCards() -->
           <div class="step step-5 hidden">
+            <div class="cards" id="useCards"></div>
+          </div>
+
+          <!-- Step 6: Contact data + summary -->
+          <div class="step step-6 hidden">
             <div class="fields">
               <div class="two">
                 <input class="field" id="name"     placeholder="Nombre"              autocomplete="name" />
@@ -131,13 +137,13 @@
   <div class="toast" id="toast">Solicitud preparada. En versión real se enviaría al CRM, email o WhatsApp del equipo.</div>
 
   <!-- Script load order matters: each file depends on the ones above it -->
-  <script src="js/utils.js?v=2"></script>
-  <script src="js/state.js?v=2"></script>
-  <script src="js/data.js?v=2"></script>
-  <script src="js/renderer.js?v=2"></script>
-  <script src="js/form.js?v=2"></script>
-  <script src="js/interactions.js?v=2"></script>
-  <script src="js/validation.js?v=2"></script>
-  <script src="js/app.js?v=2"></script>
+  <script src="js/utils.js?v=3"></script>
+  <script src="js/state.js?v=3"></script>
+  <script src="js/data.js?v=3"></script>
+  <script src="js/renderer.js?v=3"></script>
+  <script src="js/form.js?v=3"></script>
+  <script src="js/interactions.js?v=3"></script>
+  <script src="js/validation.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
 </body>
 </html>

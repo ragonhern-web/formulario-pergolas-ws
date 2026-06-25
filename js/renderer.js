@@ -168,24 +168,24 @@ function drawPostLine(project, start3, end3, color, mode = 'front') {
 function drawBackWall(project, W, L, H) {
   const wallH = H + 1.3, over = 0.5;
   const wallFace = [
-    project({ x: -W/2 - over, y: 0,     z: -L/2 }),
-    project({ x:  W/2 + over, y: 0,     z: -L/2 }),
-    project({ x:  W/2 + over, y: wallH, z: -L/2 }),
-    project({ x: -W/2 - over, y: wallH, z: -L/2 })
+    project({ x: -W/2 - over, y: 0,     z: L/2 }),
+    project({ x:  W/2 + over, y: 0,     z: L/2 }),
+    project({ x:  W/2 + over, y: wallH, z: L/2 }),
+    project({ x: -W/2 - over, y: wallH, z: L/2 })
   ];
   drawPoly(wallFace, 'rgba(255,255,255,.052)', 'rgba(255,255,255,.16)', 1.2);
   // Gable roof hint above wall
   const peakH = wallH + W * 0.26;
-  const rL = project({ x: -W/2 - over - 0.5, y: wallH, z: -L/2 });
-  const rR = project({ x:  W/2 + over + 0.5, y: wallH, z: -L/2 });
-  const rP = project({ x: 0,                  y: peakH, z: -L/2 });
+  const rL = project({ x: -W/2 - over - 0.5, y: wallH, z: L/2 });
+  const rR = project({ x:  W/2 + over + 0.5, y: wallH, z: L/2 });
+  const rP = project({ x: 0,                  y: peakH, z: L/2 });
   ctx.beginPath();
   ctx.moveTo(rL.x, rL.y); ctx.lineTo(rP.x, rP.y); ctx.lineTo(rR.x, rR.y);
   ctx.closePath();
   ctx.fillStyle = 'rgba(255,255,255,.028)'; ctx.fill();
   ctx.strokeStyle = 'rgba(255,255,255,.22)'; ctx.lineWidth = 1.5; ctx.stroke();
-  line(project({ x: -W/2-over, y: 0, z:-L/2 }), project({ x:-W/2-over, y:wallH, z:-L/2 }), 'rgba(255,255,255,.18)', 1);
-  line(project({ x:  W/2+over, y: 0, z:-L/2 }), project({ x: W/2+over, y:wallH, z:-L/2 }), 'rgba(255,255,255,.18)', 1);
+  line(project({ x: -W/2-over, y: 0, z: L/2 }), project({ x:-W/2-over, y:wallH, z: L/2 }), 'rgba(255,255,255,.18)', 1);
+  line(project({ x:  W/2+over, y: 0, z: L/2 }), project({ x: W/2+over, y:wallH, z: L/2 }), 'rgba(255,255,255,.18)', 1);
 }
 
 function drawSideWalls(project, W, L, H) {
@@ -206,6 +206,122 @@ function drawSideWalls(project, W, L, H) {
   drawPoly(rightWall, 'rgba(255,255,255,.048)', 'rgba(255,255,255,.16)', 1.2);
   line(project({ x: -W/2, y: 0, z:-L/2-over }), project({ x:-W/2, y:wallH, z:-L/2-over }), 'rgba(255,255,255,.20)', 1);
   line(project({ x:  W/2, y: 0, z:-L/2-over }), project({ x: W/2, y:wallH, z:-L/2-over }), 'rgba(255,255,255,.20)', 1);
+}
+
+// ── USE SCENE PRIMITIVES ──────────────────────────────────────────────────────
+
+// Draws a 3D box (5 faces — no bottom) from corner (x0,y0,z0) to (x1,y1,z1).
+// Faces depth-sorted for painter's algorithm correctness.
+function drawBox3D(project, x0, y0, z0, x1, y1, z1, fillTop, fillSide, stk) {
+  const sk = stk || 'rgba(255,255,255,.14)';
+  const faces = [
+    { v:[{x:x0,y:y1,z:z0},{x:x1,y:y1,z:z0},{x:x1,y:y1,z:z1},{x:x0,y:y1,z:z1}], f:fillTop  }, // top
+    { v:[{x:x0,y:y0,z:z1},{x:x1,y:y0,z:z1},{x:x1,y:y1,z:z1},{x:x0,y:y1,z:z1}], f:fillSide }, // front
+    { v:[{x:x1,y:y0,z:z0},{x:x1,y:y0,z:z1},{x:x1,y:y1,z:z1},{x:x1,y:y1,z:z0}], f:fillSide }, // right
+    { v:[{x:x0,y:y0,z:z0},{x:x0,y:y0,z:z1},{x:x0,y:y1,z:z1},{x:x0,y:y1,z:z0}], f:fillSide }, // left
+    { v:[{x:x0,y:y0,z:z0},{x:x1,y:y0,z:z0},{x:x1,y:y1,z:z0},{x:x0,y:y1,z:z0}], f:fillSide }, // back
+  ].map(face => {
+    const proj = face.v.map(project);
+    return { f:face.f, proj, depth: proj.reduce((s,p)=>s+p.depth,0)/proj.length };
+  }).sort((a,b) => b.depth-a.depth);
+  faces.forEach(f => drawPoly(f.proj, f.f, sk, 1));
+}
+
+// Parking: minimalist modern car centred under the pergola
+function drawParkingScene(project, W, L) {
+  const cW  = Math.min(W * 0.27, 0.80);   // half-width
+  const cL  = Math.min(L * 0.44, 1.95);   // half-length (along Z axis)
+  const yG  = 0.26, yT = yG + 0.60;       // body ground & top
+  const yCb = yT + 0.50;                   // cabin roof
+  const cbZ0 = -cL * 0.54, cbZ1 = cL * 0.38;
+
+  const bt = 'rgba(210,220,226,.18)', bs = 'rgba(190,202,212,.11)', bk = 'rgba(255,255,255,.22)';
+  const ct = 'rgba(190,206,218,.16)', cs = 'rgba(172,188,202,.10)', ck = 'rgba(255,255,255,.24)';
+
+  drawBox3D(project, -cW, yG, -cL, cW, yT, cL, bt, bs, bk);         // lower body
+  drawBox3D(project, -cW*0.79, yT, cbZ0, cW*0.79, yCb, cbZ1, ct, cs, ck); // cabin
+  // windshield + rear-window slope hints
+  line(project({x:-cW*0.79,y:yT,z:cbZ1}), project({x:-cW*0.79,y:yCb,z:cbZ1-0.24}), 'rgba(255,255,255,.28)', 1.2);
+  line(project({x: cW*0.79,y:yT,z:cbZ1}), project({x: cW*0.79,y:yCb,z:cbZ1-0.24}), 'rgba(255,255,255,.28)', 1.2);
+  line(project({x:-cW*0.79,y:yT,z:cbZ0}), project({x:-cW*0.79,y:yCb,z:cbZ0+0.18}), 'rgba(255,255,255,.18)', 1);
+  line(project({x: cW*0.79,y:yT,z:cbZ0}), project({x: cW*0.79,y:yCb,z:cbZ0+0.18}), 'rgba(255,255,255,.18)', 1);
+  // headlights / taillights accent
+  line(project({x:-cW,y:yG+0.20,z: cL}), project({x:cW,y:yG+0.20,z: cL}), 'rgba(255,248,200,.58)', 2.2);
+  line(project({x:-cW,y:yG+0.20,z:-cL}), project({x:cW,y:yG+0.20,z:-cL}), 'rgba(255,90,80,.48)',   2.0);
+}
+
+// Chill-out: sofa + armrests + coffee table
+function drawChillOutScene(project, W, L) {
+  const sw  = Math.min(W * 0.60, 1.80) / 2;  // sofa half-width
+  const sz  = -L * 0.14;                      // sofa front-edge z (slightly behind centre)
+  const tF  = 'rgba(220,230,232,.14)', sF = 'rgba(200,212,215,.08)', sk = 'rgba(255,255,255,.18)';
+
+  drawBox3D(project, -sw,       0,    sz-0.76, sw,       0.42, sz,      tF, sF, sk); // seat
+  drawBox3D(project, -sw,       0.42, sz-0.76, sw,       1.02, sz-0.60, tF, sF, sk); // backrest
+  drawBox3D(project, -sw,       0,    sz-0.76, -sw+0.16, 0.60, sz,      tF, sF, sk); // left arm
+  drawBox3D(project,  sw-0.16,  0,    sz-0.76,  sw,      0.60, sz,      tF, sF, sk); // right arm
+
+  const tz = sz + 0.60;
+  drawBox3D(project, -0.38, 0.40, tz, 0.38, 0.44, tz+0.60, tF, sF, sk); // coffee table top
+  // legs
+  [[-.36,tz+.04],[.36,tz+.04],[-.36,tz+.56],[.36,tz+.56]].forEach(([lx,lz]) =>
+    line(project({x:lx,y:0,z:lz}), project({x:lx,y:0.40,z:lz}), 'rgba(255,255,255,.20)', 1.5)
+  );
+}
+
+// Dining: table + 4 chairs with backrests
+function drawDiningScene(project, W, L) {
+  const tW = Math.min(W * 0.50, 0.86);
+  const tL = 0.44;
+  const tF = 'rgba(220,228,230,.14)', sF = 'rgba(200,210,215,.08)', sk = 'rgba(255,255,255,.18)';
+
+  drawBox3D(project, -tW, 0.72, -tL, tW, 0.76, tL, tF, sF, sk); // table top
+  [[-tW+.07,-tL+.07],[tW-.07,-tL+.07],[-tW+.07,tL-.07],[tW-.07,tL-.07]].forEach(([lx,lz]) =>
+    line(project({x:lx,y:0,z:lz}), project({x:lx,y:0.72,z:lz}), 'rgba(255,255,255,.22)', 1.5)
+  );
+
+  const cW = 0.19, cH = 0.44, cbH = 0.90;
+  // Side chairs (left & right of table)
+  [
+    { x0:-tW-0.44, x1:-tW-0.06, z0:-cW, z1:cW, bx1:-tW-0.38 },
+    { x0: tW+0.06, x1: tW+0.44, z0:-cW, z1:cW, bx1: tW+0.38 },
+  ].forEach(c => {
+    drawBox3D(project, c.x0, 0, c.z0, c.x1, cH, c.z1, tF, sF, sk);
+    const bx0 = c.bx1 - 0.06, bx1 = c.bx1;
+    drawBox3D(project, Math.min(bx0,bx1), cH, c.z0, Math.max(bx0,bx1), cbH, c.z1, tF, sF, sk);
+  });
+  // Front & back chairs
+  [
+    { z0: tL+0.06, z1: tL+0.44, bz0: tL+0.38, bz1: tL+0.44 },
+    { z0:-tL-0.44, z1:-tL-0.06, bz0:-tL-0.44, bz1:-tL-0.38 },
+  ].forEach(c => {
+    drawBox3D(project, -cW, 0, c.z0, cW, cH, c.z1, tF, sF, sk);
+    drawBox3D(project, -cW, cH, c.bz0, cW, cbH, c.bz1, tF, sF, sk);
+  });
+}
+
+// Protected area: partial privacy panels + workbench at back
+function drawProtectedAreaScene(project, W, L, H) {
+  const pF  = 'rgba(255,255,255,.048)', pS = 'rgba(255,255,255,.18)';
+  const panH = Math.min(H * 0.54, 1.42);
+
+  drawBox3D(project, -W/2,      0, -L/2, -W/2+0.08, panH,  L/2, pF, pF, pS);
+  drawBox3D(project,  W/2-0.08, 0, -L/2,  W/2,      panH,  L/2, pF, pF, pS);
+
+  const bW  = Math.min(W * 0.48, 1.22);
+  const bF  = 'rgba(210,220,225,.12)', bS = 'rgba(190,200,206,.07)';
+  drawBox3D(project, -bW, 0,    -L/2+0.08, bW, 0.82, -L/2+0.58, bF, bS, pS); // workbench body
+  drawBox3D(project, -bW, 0.82, -L/2+0.08, bW, 0.86, -L/2+0.62, bF, bS, pS); // worktop
+  drawBox3D(project, -bW, 1.36, -L/2+0.10, bW, 1.40, -L/2+0.50, bF, bS, pS); // shelf
+}
+
+function drawUseScene(project, W, L, H) {
+  switch (state.useType) {
+    case 'parking':        drawParkingScene(project, W, L);        break;
+    case 'chill-out':      drawChillOutScene(project, W, L);       break;
+    case 'dining':         drawDiningScene(project, W, L);         break;
+    case 'protected-area': drawProtectedAreaScene(project, W, L, H); break;
+  }
 }
 
 // ── MAIN DRAW LOOP ────────────────────────────────────────────────────────────
@@ -299,11 +415,13 @@ function drawPergola() {
   const rearPosts  = posts.slice(0, 2);
   const frontPosts = posts.slice(2);
 
-  // Draw order: rear posts → roof faces → hidden-post hint → front posts → trim
-  // wall-attached: rear posts hidden behind the house wall — don't draw them
-  if (state.installationType !== 'wall-attached') {
-    rearPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'rear'));
-  }
+  // Draw order: rear posts → use scene → roof faces → dashed hints → front posts → trim
+  // wall-attached (wall now at z=+L/2): front posts replaced by wall — draw rear posts normally
+  rearPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'rear'));
+
+  // Use-scene objects (furniture / car / panels) — visible from step 5 onward
+  if (state.step >= 5) drawUseScene(project, W, L, H);
+
   faces.forEach(face => drawPoly(face.projected, face.fill, face.stroke, 1));
 
   // Roof-surface details per material
@@ -327,18 +445,21 @@ function drawPergola() {
     ctx.restore();
   }
 
-  // Dashed hint for the portion of rear posts hidden behind the roof (not for wall-attached)
-  if (state.installationType !== 'wall-attached') {
-    rearPosts.forEach(post => drawPostLine(project, post.hiddenStart, post.top, iron, 'hidden'));
-  }
+  // Dashed hint for the portion of rear posts hidden behind the roof
+  rearPosts.forEach(post => drawPostLine(project, post.hiddenStart, post.top, iron, 'hidden'));
 
   // LED strip accent lines along front beam and right lateral
   if (state.roofKey !== 'poly') {
-    line(project({ x: -W/2-.14, y: yFront+.04, z:  L/2+.18 }), project({ x:  W/2+.14, y: yFront+.04, z:  L/2+.18 }), 'rgba(255,245,196,.94)', 3);
+    if (state.installationType !== 'wall-attached') {
+      line(project({ x: -W/2-.14, y: yFront+.04, z:  L/2+.18 }), project({ x:  W/2+.14, y: yFront+.04, z:  L/2+.18 }), 'rgba(255,245,196,.94)', 3);
+    }
     line(project({ x:  W/2+.16, y: yBack +.04, z: -L/2+.10 }), project({ x:  W/2+.16, y: yFront+.04, z:  L/2+.18 }), 'rgba(255,245,196,.74)', 2.2);
   }
 
-  frontPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'front'));
+  // wall-attached: front posts (at z=+L/2) replaced by the wall — skip them
+  if (state.installationType !== 'wall-attached') {
+    frontPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'front'));
+  }
 
   // Roof frame edge lines
   [
