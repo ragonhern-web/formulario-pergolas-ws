@@ -71,6 +71,11 @@ function setStep(step) {
   if (state.step === 3) renderRoofCards();
   updateSummary();
   applyStepCamera(state.step);
+  // Móvil: compact en pasos 2+ y scroll al inicio para ver el título del paso
+  if (window.innerWidth <= 980) {
+    document.body.classList.toggle('visual-compact', state.step > 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 function applyStepCamera(step) {
@@ -86,6 +91,11 @@ function applyStepCamera(step) {
     resetCameraFocus();
   }
   updateViewButtons();
+  // Paso 1 = vista isométrica: marcar el botón iso como activo
+  if (step === 1) {
+    const isoBtn = document.querySelector('[data-view="iso"]');
+    if (isoBtn) isoBtn.classList.add('active');
+  }
 }
 
 function updateSummary() {

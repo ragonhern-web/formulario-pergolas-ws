@@ -40,17 +40,20 @@ $('nextBtn').addEventListener('click', () => {
   });
 });
 
-// ── MÓVIL: reducir visor al hacer scroll ─────────────────────────────────────
-// Al bajar un poco, el visor pasa de 54vh a 36vh para dar más espacio al form.
+// ── MÓVIL: reducir visor al hacer scroll o en pasos 2+ ───────────────────────
+// Compact = scroll > 40px O paso actual > 1. setStep() también lo llama.
+function updateCompactState() {
+  if (window.innerWidth > 980) { document.body.classList.remove('visual-compact'); return; }
+  const scrolled = (window.pageYOffset || window.scrollY) > 40;
+  document.body.classList.toggle('visual-compact', scrolled || state.step > 1);
+}
+
 (function initCompactVisual() {
   if (window.innerWidth > 980) return;
-  const threshold = 40;
-  function onScroll() {
-    document.body.classList.toggle('visual-compact', (window.pageYOffset || window.scrollY) > threshold);
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('scroll', updateCompactState, { passive: true });
   window.addEventListener('resize', () => {
     if (window.innerWidth > 980) document.body.classList.remove('visual-compact');
+    else updateCompactState();
   });
 })();
 
