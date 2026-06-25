@@ -17,10 +17,11 @@
   }
   .visual::after { display: none; }
 
-  /* Spacer ocupa el mismo espacio que el visor fijo */
+  /* Spacer: tamaño fijo siempre, independiente del tamaño actual del visor */
   .visual-spacer {
     display: block;
-    height: var(--visual-h, 54vh);
+    height: 54vh;
+    min-height: 340px;
   }
 
   .topbar { left: 16px; right: 16px; top: 14px; }
