@@ -100,9 +100,13 @@ function setStep(step) {
   if (state.step === 3) renderRoofCards();
   updateSummary();
   applyStepCamera(state.step);
-  if (window.innerWidth <= 980) {
-    const panel = document.querySelector('.panel');
-    if (panel) window.scrollTo({ top: panel.offsetTop, behavior: 'smooth' });
+  const panel = document.querySelector('.panel');
+  if (panel) {
+    if (window.innerWidth <= 980) {
+      window.scrollTo({ top: panel.offsetTop, behavior: 'smooth' });
+    } else {
+      panel.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 }
 

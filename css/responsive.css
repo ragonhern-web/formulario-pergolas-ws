@@ -74,4 +74,7 @@
   .two   { grid-template-columns: 1fr; }
 
   .toast { left: 18px; right: 18px; bottom: 18px; }
+
+  /* Botón Continuar: fluye con el contenido, no fijo al fondo */
+  .nav { position: static; background: none; padding-top: 16px; margin-top: 24px; }
 }
