@@ -1,15 +1,23 @@
 // Editable configuration data — change options here without touching logic files.
 
 const STEPS_CONFIG = {
-  1: ['Medidas de la pérgola',  'Empieza por las medidas aproximadas. No hace falta que sean exactas al milímetro; luego se revisan en llamada o visita técnica.'],
-  2: ['Elegir el hierro',       'Selecciona el acabado visual de la estructura. La pérgola cambia de color en la vista para enseñar el resultado de forma rápida.'],
-  3: ['Elegir el techo',        'Elige el tipo de cubierta. La parte superior y el interior cambian para simular el material seleccionado.'],
-  4: ['Datos de contacto',      'Deja los datos para que el equipo pueda revisar la configuración y preparar un presupuesto personalizado.']
+  1: ['Medidas de la pérgola',      'Empieza por las medidas aproximadas. No hace falta que sean exactas al milímetro; luego se revisan en llamada o visita técnica.'],
+  2: ['Tipo de instalación',        'Indica cómo se va a instalar la pérgola para que el equipo pueda preparar la propuesta adecuada.'],
+  3: ['Elegir el hierro',           'Selecciona el acabado visual de la estructura. La pérgola cambia de color en la vista para enseñar el resultado de forma rápida.'],
+  4: ['Elegir el techo',            'Elige el tipo de cubierta. La parte superior y el interior cambian para simular el material seleccionado.'],
+  5: ['Datos de contacto',          'Deja los datos para que el equipo pueda revisar la configuración y preparar un presupuesto personalizado.']
 };
+
+// Installation type options for step 2
+const INSTALLATION_OPTIONS = [
+  { id: 'wall-attached',  title: 'Pegada a una pared',          desc: 'Ideal para terrazas o zonas junto a la vivienda.' },
+  { id: 'freestanding',   title: 'Independiente / autoportante', desc: 'Estructura libre con apoyo en cuatro postes.' },
+  { id: 'between-walls',  title: 'Entre paredes',                desc: 'Perfecta para espacios encajados entre muros laterales.' },
+  { id: 'unsure',         title: 'No lo sé todavía',             desc: 'Te ayudaremos a elegir la mejor solución para tu espacio.' }
+];
 
 // Iron / steel finish options.
 // imagePath: set to a relative path like 'assets/images/irons/negro-brillo.png' once images are uploaded.
-// The card will show the image instead of the colour swatch when imagePath is not null.
 const IRONS = [
   { name: 'Negro brillo',  desc: 'Acabado premium y contundente.',  color: '#070809', profile: '100×100 mm', imagePath: null },
   { name: 'Negro mate',    desc: 'Más sobrio, moderno y elegante.', color: '#111416', profile: '100×100 mm', imagePath: null },
@@ -20,9 +28,10 @@ const IRONS = [
 // Per-step camera presets — applied automatically when navigating steps.
 const STEP_CAMERAS = {
   1: { yaw: -0.72, pitch: -0.62, zoom: 1.00 },
-  2: { yaw: -0.90, pitch: -0.16, zoom: 1.55, focus: { x: 0, y: 1.35, z: 0 } },
-  3: { yaw: -0.60, pitch: -0.95, zoom: 1.12, focus: { x: 0, y: 2.0, z: 0 } },
-  4: { yaw: -0.72, pitch: -0.58, zoom: 0.90 }
+  2: { yaw: -0.65, pitch: -0.52, zoom: 1.05 },
+  3: { yaw: -0.90, pitch: -0.16, zoom: 1.55, focus: { x: 0, y: 1.35, z: 0 } },
+  4: { yaw: -0.60, pitch: -0.95, zoom: 1.12, focus: { x: 0, y: 2.0,  z: 0 } },
+  5: { yaw: -0.72, pitch: -0.58, zoom: 0.90 }
 };
 
 // Roof / cover options.

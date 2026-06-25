@@ -96,7 +96,7 @@ canvas.dragging { cursor: grabbing; }
 }
 .panel-inner { min-height: 100%; display: flex; flex-direction: column; gap: 22px; }
 
-.stepper { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 4px; }
+.stepper { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-top: 4px; }
 .step-dot { height: 5px; border-radius: 99px; background: rgba(255,255,255,.14); overflow: hidden; }
 .step-dot span { display: block; height: 100%; width: 0; background: #fff; border-radius: 99px; transition: width .35s ease; }
 .step-dot.active span { width: 100%; }
@@ -153,6 +153,10 @@ input[type="range"]::-moz-range-thumb   { width: 28px; height: 28px; border-radi
 .option h3               { margin: 0 0 8px; font-size: 18px; line-height: 1.02; letter-spacing: -.055em; }
 .option p                { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.32; }
 .option.selected p       { color: rgba(0,0,0,.62); }
+
+/* Installation type icon (step 2) */
+.install-icon { display: block; width: 100%; margin-bottom: 14px; }
+.install-icon svg { width: 100%; height: 40px; display: block; }
 
 /* Color swatch (fallback until image is provided) */
 .swatch {

@@ -19,6 +19,7 @@ const state = {
   roofKey:   'panel',
   roofColor: '#2c3031',
   slope:     0,
+  installationType: 'freestanding',
 
   // Camera state (radians / scale)
   yaw:         -0.72,

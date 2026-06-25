@@ -163,6 +163,51 @@ function drawPostLine(project, start3, end3, color, mode = 'front') {
   line(a, b, color, 6);
 }
 
+// ── INSTALLATION CONTEXT ──────────────────────────────────────────────────────
+
+function drawBackWall(project, W, L, H) {
+  const wallH = H + 1.3, over = 0.5;
+  const wallFace = [
+    project({ x: -W/2 - over, y: 0,     z: -L/2 }),
+    project({ x:  W/2 + over, y: 0,     z: -L/2 }),
+    project({ x:  W/2 + over, y: wallH, z: -L/2 }),
+    project({ x: -W/2 - over, y: wallH, z: -L/2 })
+  ];
+  drawPoly(wallFace, 'rgba(255,255,255,.052)', 'rgba(255,255,255,.16)', 1.2);
+  // Gable roof hint above wall
+  const peakH = wallH + W * 0.26;
+  const rL = project({ x: -W/2 - over - 0.5, y: wallH, z: -L/2 });
+  const rR = project({ x:  W/2 + over + 0.5, y: wallH, z: -L/2 });
+  const rP = project({ x: 0,                  y: peakH, z: -L/2 });
+  ctx.beginPath();
+  ctx.moveTo(rL.x, rL.y); ctx.lineTo(rP.x, rP.y); ctx.lineTo(rR.x, rR.y);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(255,255,255,.028)'; ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.22)'; ctx.lineWidth = 1.5; ctx.stroke();
+  line(project({ x: -W/2-over, y: 0, z:-L/2 }), project({ x:-W/2-over, y:wallH, z:-L/2 }), 'rgba(255,255,255,.18)', 1);
+  line(project({ x:  W/2+over, y: 0, z:-L/2 }), project({ x: W/2+over, y:wallH, z:-L/2 }), 'rgba(255,255,255,.18)', 1);
+}
+
+function drawSideWalls(project, W, L, H) {
+  const wallH = H + 0.5, over = 0.5;
+  const leftWall = [
+    project({ x: -W/2, y: 0,     z: -L/2 - over }),
+    project({ x: -W/2, y: 0,     z:  L/2 + over }),
+    project({ x: -W/2, y: wallH, z:  L/2 + over }),
+    project({ x: -W/2, y: wallH, z: -L/2 - over })
+  ];
+  const rightWall = [
+    project({ x: W/2, y: 0,     z: -L/2 - over }),
+    project({ x: W/2, y: 0,     z:  L/2 + over }),
+    project({ x: W/2, y: wallH, z:  L/2 + over }),
+    project({ x: W/2, y: wallH, z: -L/2 - over })
+  ];
+  drawPoly(leftWall,  'rgba(255,255,255,.048)', 'rgba(255,255,255,.16)', 1.2);
+  drawPoly(rightWall, 'rgba(255,255,255,.048)', 'rgba(255,255,255,.16)', 1.2);
+  line(project({ x: -W/2, y: 0, z:-L/2-over }), project({ x:-W/2, y:wallH, z:-L/2-over }), 'rgba(255,255,255,.20)', 1);
+  line(project({ x:  W/2, y: 0, z:-L/2-over }), project({ x: W/2, y:wallH, z:-L/2-over }), 'rgba(255,255,255,.20)', 1);
+}
+
 // ── MAIN DRAW LOOP ────────────────────────────────────────────────────────────
 
 function drawPergola() {
@@ -189,6 +234,10 @@ function drawPergola() {
   const iron = state.ironColor, roof = state.roofColor;
 
   drawGroundGrid(project);
+
+  // Installation context walls — drawn before the pergola so it appears on top
+  if (state.installationType === 'wall-attached') drawBackWall(project, W, L, H);
+  if (state.installationType === 'between-walls') drawSideWalls(project, W, L, H);
 
   // Ground shadow plane
   const floor = [
@@ -251,7 +300,10 @@ function drawPergola() {
   const frontPosts = posts.slice(2);
 
   // Draw order: rear posts → roof faces → hidden-post hint → front posts → trim
-  rearPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'rear'));
+  // wall-attached: rear posts hidden behind the house wall — don't draw them
+  if (state.installationType !== 'wall-attached') {
+    rearPosts.forEach(post => drawPostLine(project, post.base, post.top, iron, 'rear'));
+  }
   faces.forEach(face => drawPoly(face.projected, face.fill, face.stroke, 1));
 
   // Roof-surface details per material
@@ -275,8 +327,10 @@ function drawPergola() {
     ctx.restore();
   }
 
-  // Dashed hint for the portion of rear posts hidden behind the roof
-  rearPosts.forEach(post => drawPostLine(project, post.hiddenStart, post.top, iron, 'hidden'));
+  // Dashed hint for the portion of rear posts hidden behind the roof (not for wall-attached)
+  if (state.installationType !== 'wall-attached') {
+    rearPosts.forEach(post => drawPostLine(project, post.hiddenStart, post.top, iron, 'hidden'));
+  }
 
   // LED strip accent lines along front beam and right lateral
   if (state.roofKey !== 'poly') {

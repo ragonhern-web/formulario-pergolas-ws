@@ -24,10 +24,10 @@ document.querySelectorAll('[data-preset]').forEach(btn => {
 // Step navigation
 $('backBtn').addEventListener('click', () => setStep(state.step - 1));
 $('nextBtn').addEventListener('click', () => {
-  if (state.step < 4) {
+  if (state.step < 5) {
     setStep(state.step + 1);
   } else {
-    if (validateStep(4)) submitMock();
+    if (validateStep(5)) submitMock();
   }
 });
 

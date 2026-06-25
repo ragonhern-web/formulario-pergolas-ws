@@ -41,6 +41,7 @@
           <div class="step-dot"><span></span></div>
           <div class="step-dot"><span></span></div>
           <div class="step-dot"><span></span></div>
+          <div class="step-dot"><span></span></div>
         </div>
 
         <div class="panel-title">
@@ -87,18 +88,23 @@
             </div>
           </div>
 
-          <!-- Step 2: Iron finish — cards injected by renderIronCards() -->
+          <!-- Step 2: Installation type — cards injected by renderInstallationCards() -->
           <div class="step step-2 hidden">
+            <div class="cards" id="installationCards"></div>
+          </div>
+
+          <!-- Step 3: Iron finish — cards injected by renderIronCards() -->
+          <div class="step step-3 hidden">
             <div class="cards" id="ironCards"></div>
           </div>
 
-          <!-- Step 3: Roof type — cards injected by renderRoofCards() -->
-          <div class="step step-3 hidden">
+          <!-- Step 4: Roof type — cards injected by renderRoofCards() -->
+          <div class="step step-4 hidden">
             <div class="cards" id="roofCards"></div>
           </div>
 
-          <!-- Step 4: Contact data + summary -->
-          <div class="step step-4 hidden">
+          <!-- Step 5: Contact data + summary -->
+          <div class="step step-5 hidden">
             <div class="fields">
               <div class="two">
                 <input class="field" id="name"     placeholder="Nombre"              autocomplete="name" />
@@ -106,7 +112,7 @@
               </div>
               <input   class="field" id="email"    placeholder="Email"               autocomplete="email" />
               <input   class="field" id="location" placeholder="Localidad / provincia" />
-              <textarea              id="notes"    placeholder="Cuéntanos cualquier detalle: pared donde se apoya, uso previsto, cocina exterior, iluminación, fotos disponibles..."></textarea>
+              <textarea              id="notes"    placeholder="Cuéntanos cualquier detalle: uso previsto, cocina exterior, iluminación, fotos disponibles..."></textarea>
             </div>
             <div class="summary" id="summary"></div>
           </div>
