@@ -103,7 +103,10 @@ function setStep(step) {
   const panel = document.querySelector('.panel');
   if (panel) {
     if (window.innerWidth <= 980) {
-      window.scrollTo({ top: panel.offsetTop, behavior: 'smooth' });
+      // El visor es sticky (56vh) y está encima del panel en el layout.
+      // Scrollear a 0 deja el visor en la parte superior y el panel
+      // (stepper + título + lead) visible justo debajo.
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       panel.scrollTo({ top: 0, behavior: 'smooth' });
     }
