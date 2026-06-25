@@ -71,18 +71,11 @@ function setStep(step) {
   if (state.step === 3) renderRoofCards();
   updateSummary();
   applyStepCamera(state.step);
-  // Móvil: encoger visor si hace falta y scroll al inicio del panel del nuevo paso
+  // Móvil: encoger visor si hace falta y scroll al top del panel
   if (window.innerWidth <= 980) {
     if (typeof applyVisualSize === 'function') applyVisualSize();
-    // Esperamos un frame para que el layout recalcule --visual-h antes de medir
-    requestAnimationFrame(() => {
-      const visual = document.querySelector('.visual');
-      const panel  = document.querySelector('.panel');
-      if (!panel) return;
-      const visualH = visual ? visual.getBoundingClientRect().height : 0;
-      // Scrollear justo hasta donde el panel empieza a quedar visible bajo el visor
-      window.scrollTo({ top: Math.max(0, panel.offsetTop - visualH), behavior: 'smooth' });
-    });
+    const panel = document.querySelector('.panel');
+    if (panel) window.scrollTo({ top: panel.offsetTop, behavior: 'smooth' });
   }
 }
 
